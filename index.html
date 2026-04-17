@@ -1,0 +1,2491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Español">
+<meta name="theme-color" content="#C1440E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23C1440E'/%3E%3Ctext x='90' y='125' font-size='100' text-anchor='middle' font-family='serif'%3E🇪🇸%3C/text%3E%3C/svg%3E">
+<title>Español Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --terra:   #C1440E;
+    --sand:    #F5ECD7;
+    --cream:   #FBF7EF;
+    --clay:    #8B3A1F;
+    --bark:    #3E2010;
+    --sage:    #6B7C5C;
+    --mist:    #D9CDB8;
+    --gold:    #D4A847;
+    --shadow:  rgba(62,32,16,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--cream);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(193,68,14,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(212,168,71,0.1) 0%, transparent 55%);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--bark);
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ─────────────────────────────────────── */
+  header {
+    width: 100%;
+    background: var(--terra);
+    background-image: linear-gradient(135deg, #c1440e 0%, #a33509 100%);
+    padding: 14px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 12px var(--shadow);
+    position: relative;
+    z-index: 10;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    color: #fff;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+
+  header h1 span {
+    font-style: italic;
+    font-weight: 400;
+    opacity: 0.85;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 1px;
+  }
+
+  .progress-pill {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* ── Progress bar ────────────────────────────────── */
+  .progress-bar-wrap {
+    width: 100%;
+    height: 4px;
+    background: var(--mist);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terra), var(--gold));
+    transition: width 0.4s ease;
+  }
+
+  /* ── Main card area ─────────────────────────────── */
+  .stage {
+    flex: 1;
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 16px 6px;
+  }
+
+  .card {
+    width: 100%;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 32px var(--shadow), 0 1px 0 var(--mist) inset;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ornamental top stripe */
+  .card::before {
+    content: '';
+    display: block;
+    height: 5px;
+    background: linear-gradient(90deg, var(--terra) 0%, var(--gold) 60%, var(--sage) 100%);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: row;
+    min-height: 140px;
+  }
+
+  /* ── Left panel – Spanish ──────────────────────── */
+  .panel-spanish {
+    flex: 1;
+    padding: 14px 16px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1.5px solid var(--mist);
+    position: relative;
+  }
+
+  .panel-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 6px;
+    opacity: 0.9;
+  }
+
+  .pronunciation {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(0.8rem, 2.5vw, 0.98rem);
+    color: #8B2800;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    font-style: italic;
+    transition: opacity 0.5s ease;
+  }
+
+  /* ── Right panel – English ─────────────────────── */
+  .panel-english {
+    flex: 1;
+    padding: 14px 18px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(135deg, #faf8f4 0%, #f5edd8 100%);
+  }
+
+  .english-word {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5.5vw, 2.3rem);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--sage);
+    line-height: 1.1;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    margin-bottom: 3px;
+  }
+
+  .english-word.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .english-hint {
+    font-size: 0.72rem;
+    color: var(--mist);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+  }
+
+  .english-hint.hidden-hint { opacity: 0; }
+
+  /* ── Timer ring indicator ───────────────────────── */
+  .timer-ring-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 6px;
+    gap: 28px;
+  }
+
+  .ring-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .ring-svg { transform: rotate(-90deg); }
+
+  .ring-bg { fill: none; stroke: var(--mist); stroke-width: 3; }
+  .ring-progress {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+  }
+  .ring-reveal  { stroke: var(--terra); }
+  .ring-advance { stroke: var(--sage); }
+
+  /* Pulsing speaker state while Spanish audio plays */
+  .ring-speaking .ring-bg {
+    stroke: var(--terra);
+    opacity: 0.25;
+    animation: ringPulse 1s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%, 100% { opacity: 0.15; }
+    50%       { opacity: 0.4;  }
+  }
+
+  .ring-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: center;
+  }
+
+  /* ── Controls strip ─────────────────────────────── */
+  .controls {
+    width: 100%;
+    max-width: 700px;
+    padding: 10px 16px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .compact-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .compact-toggle {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .compact-toggle:active { background: var(--sand); }
+
+  .ct-label {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--terra);
+  }
+
+  .ct-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ct-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--bark);
+    line-height: 1;
+  }
+
+  .compact-delay {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .compact-delay-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .ct-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--bark);
+    min-width: 38px;
+    text-align: center;
+  }
+
+  .adj-btn-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--mist);
+    background: var(--cream);
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--bark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    user-select: none;
+  }
+  .adj-btn-sm:active { transform: scale(0.9); background: var(--sand); }
+
+  /* ── Play / Pause / Skip row ───────────────────── */
+  .action-row {
+    width: 100%;
+    max-width: 700px;
+    padding: 6px 16px 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .play-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--terra), var(--clay));
+    color: #fff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(193,68,14,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    user-select: none;
+  }
+
+  .play-btn:active { transform: scale(0.92); box-shadow: 0 2px 8px rgba(193,68,14,0.25); }
+  .play-btn.hover-paused {
+    background: linear-gradient(135deg, var(--sage), #4a5e3a);
+    box-shadow: 0 4px 16px rgba(107,124,92,0.4);
+  }
+
+  .skip-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--mist);
+    background: #fff;
+    color: var(--bark);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s;
+    user-select: none;
+  }
+
+  .skip-btn:active { transform: scale(0.91); }
+
+  .restart-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--mist);
+    background: #fff;
+    color: var(--bark);
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s;
+    user-select: none;
+  }
+
+  .restart-btn:active { transform: scale(0.91); }
+
+  /* ── Completed overlay ──────────────────────────── */
+  .done-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(62,32,16,0.6);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .done-overlay.show { display: flex; }
+
+  .done-box {
+    background: var(--cream);
+    border-radius: 24px;
+    padding: 40px 36px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+    max-width: 320px;
+    width: 90%;
+  }
+
+  .done-box .trophy { font-size: 3rem; margin-bottom: 12px; }
+  .done-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--bark);
+    margin-bottom: 8px;
+  }
+  .done-box p {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .done-restart {
+    background: linear-gradient(135deg, var(--terra), var(--clay));
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 13px 32px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(193,68,14,0.3);
+  }
+
+  /* ── Card flip animation ────────────────────────── */
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateX(18px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .card-animate { animation: cardIn 0.35s ease both; }
+  .card.interaction-paused { box-shadow: 0 0 0 3px var(--terra), 0 6px 32px var(--shadow); transition: box-shadow 0.15s ease; }
+
+  /* ── Audio button (replay) ──────────────────────── */
+  .speak-btn {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1.5px solid var(--mist);
+    border-radius: 999px;
+    padding: 5px 13px 5px 9px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--terra);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .speak-btn:active { transform: scale(0.92); background: var(--sand); }
+  .speak-btn.speaking { border-color: var(--terra); background: rgba(193,68,14,0.07); }
+  .speak-btn .speak-icon { font-size: 1rem; }
+
+  /* ── Mute toggle in header ──────────────────────── */
+  .mute-btn {
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 5px 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transition: background 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .mute-btn:active { transform: scale(0.92); }
+  .mute-btn.muted { background: rgba(0,0,0,0.2); opacity: 0.7; }
+
+  /* ── iOS audio unlock banner ────────────────────── */
+  .audio-banner {
+    width: 100%;
+    background: linear-gradient(90deg, var(--gold), #e8b830);
+    color: var(--bark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: none;
+    user-select: none;
+  }
+  .audio-banner.show { display: block; }
+
+  /* ── Voice tip panel ────────────────────────────── */
+  .voice-tip {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 16px;
+    padding: 10px 16px;
+    background: rgba(107,124,92,0.1);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.72rem;
+    color: var(--sage);
+    line-height: 1.5;
+    display: none;
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+  .voice-tip.show { display: block; }
+  .voice-tip.fade-out { opacity: 0; }
+
+  /* ── Responsive stacking for small screens ──────── */
+  @media (max-width: 420px) {
+    .card-body { flex-direction: column; min-height: unset; }
+    .panel-spanish { border-right: none; border-bottom: 1.5px solid var(--mist); padding: 22px 20px 18px; }
+    .panel-english { padding: 18px 20px 22px; }
+    header h1 { font-size: 1.2rem; }
+  }
+  /* ── Recent words history ───────────────────────── */
+  .history-wrap {
+    width: 100%;
+    max-width: 700px;
+    padding: 0 16px 28px;
+    display: none;
+  }
+  .history-wrap.has-items { display: block; }
+
+  .history-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 11px;
+    padding: 8px 14px;
+    box-shadow: 0 1px 5px var(--shadow);
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(6px);
+    animation: historyIn 0.3s ease forwards;
+  }
+
+  @keyframes historyIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .history-num {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--mist);
+    width: 18px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .history-es {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--bark);
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-pron {
+    font-size: 0.68rem;
+    color: var(--terra);
+    font-style: italic;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-en {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--sage);
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* fade oldest item */
+  .history-item:last-child { opacity: 0.45 !important; }
+
+  /* ── Set picker modal ───────────────────────────── */
+  .set-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30,14,6,0.55);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .set-modal-overlay.open { display: flex; }
+
+  .set-modal-sheet {
+    width: 100%;
+    max-width: 700px;
+    background: var(--cream);
+    border-radius: 24px 24px 0 0;
+    padding: 0 0 32px;
+    max-height: 88vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+  }
+  .set-modal-overlay.open .set-modal-sheet {
+    transform: translateY(0);
+  }
+
+  .sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--mist);
+    border-radius: 999px;
+    margin: 12px auto 0;
+  }
+
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1.5px solid var(--mist);
+  }
+
+  .sheet-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--bark);
+  }
+
+  .sheet-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--mist);
+    color: var(--bark);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .sheet-close:active { transform: scale(0.9); background: var(--sand); }
+
+  .set-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 14px 14px 0;
+  }
+
+  .set-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    padding: 14px 12px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: border-color 0.15s, background 0.15s, transform 0.12s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 80px;
+  }
+  .set-card:active { transform: scale(0.96); }
+  .set-card.active {
+    border-color: var(--terra);
+    background: linear-gradient(135deg, #fff8f5 0%, #fff 100%);
+  }
+
+  .set-card-emoji {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .set-card-name {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--bark);
+    line-height: 1.2;
+  }
+
+  .set-card-count {
+    font-size: 0.62rem;
+    color: #aaa;
+    font-weight: 400;
+  }
+
+  .set-card.active .set-card-name { color: var(--terra); }
+  .set-card.active .set-card-count { color: var(--clay); opacity: 0.7; }
+
+  /* ── Choose Set button in header ────────────────── */
+  .choose-set-btn {
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    transition: background 0.15s, transform 0.1s;
+    user-select: none;
+    max-width: 130px;
+  }
+  .choose-set-btn:active { transform: scale(0.93); }
+  .choose-set-btn .csb-label {
+    font-size: 0.55rem;
+    opacity: 0.7;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .choose-set-btn .csb-name {
+    font-size: 0.72rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  /* ── Spanish word hidden state (EN→ES mode) ─────── */
+  .spanish-word {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    font-weight: 700;
+    color: #1a0a00;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .spanish-word.answer-hidden   { opacity: 0; transform: translateY(8px); }
+  .pronunciation.answer-hidden  { opacity: 0; }
+
+  /* ── Mode toggle row ────────────────────────────── */
+  .mode-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .mode-info { display: flex; flex-direction: column; gap: 2px; }
+
+  .mode-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bark);
+  }
+
+  .mode-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--bark);
+    line-height: 1;
+  }
+
+  /* iOS-style toggle switch */
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-track {
+    width: 52px;
+    height: 30px;
+    border-radius: 999px;
+    background: var(--mist);
+    position: relative;
+    transition: background 0.25s ease;
+    flex-shrink: 0;
+  }
+  .toggle-track.on { background: var(--sage); }
+  .toggle-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .toggle-track.on .toggle-thumb { transform: translateX(22px); }
+
+  /* ── Flag button on history rows ────────── */
+  .history-flag {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--mist); background: transparent;
+    color: var(--mist); font-size: 0.85rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.18s ease; user-select: none;
+  }
+  .history-flag.flagged { border-color: var(--terra); background: var(--terra); color: #fff; }
+
+  .history-easy {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--mist); background: transparent;
+    color: var(--mist); font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.18s ease; user-select: none;
+  }
+  .history-easy.easy { border-color: var(--sage); background: var(--sage); color: #fff; }
+
+  /* ── Word list sheet ─────────────────────────────── */
+  .word-list-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(30,14,6,0.55); z-index: 100;
+    align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  }
+  .word-list-overlay.open { display: flex; }
+  .word-list-sheet {
+    width: 100%; max-width: 700px; background: var(--cream);
+    border-radius: 24px 24px 0 0; max-height: 88vh;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25); padding-bottom: 32px;
+  }
+  .word-list-overlay.open .word-list-sheet { transform: translateY(0); }
+  .wl-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px 12px; border-bottom: 1.5px solid var(--mist);
+    position: sticky; top: 0; background: var(--cream); z-index: 2;
+  }
+  .wl-title-block { display: flex; flex-direction: column; gap: 2px; }
+  .wl-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--bark); }
+  .wl-subtitle { font-size: 0.65rem; color: #aaa; font-weight: 400; letter-spacing: 0.06em; }
+  .wl-actions { display: flex; gap: 8px; align-items: center; }
+  .wl-btn {
+    font-family: 'Lato', sans-serif; font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px;
+    padding: 5px 11px; cursor: pointer; border: 1.5px solid var(--mist);
+    background: #fff; color: var(--bark); transition: background 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .wl-btn:active { transform: scale(0.93); background: var(--sand); }
+  .wl-btn.danger { border-color: var(--terra); color: var(--terra); }
+  .word-row {
+    display: flex; align-items: center; padding: 11px 18px; gap: 12px;
+    border-bottom: 1px solid rgba(217,205,184,0.4); cursor: pointer;
+    transition: background 0.12s; -webkit-tap-highlight-color: transparent;
+  }
+  .word-row:active { background: var(--sand); }
+  .word-row-check {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid var(--mist); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; color: transparent; flex-shrink: 0; transition: all 0.18s;
+  }
+  .word-row.flagged .word-row-check { border-color: var(--terra); background: var(--terra); color: #fff; }
+  .word-row-text { flex: 1; min-width: 0; }
+  .word-row-es { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--bark); }
+  .word-row-sub { font-size: 0.68rem; color: #aaa; margin-top: 1px; }
+  .word-row-en { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-style: italic; color: var(--sage); text-align: right; flex-shrink: 0; max-width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ── Flag badge on set cards ──────────────────── */
+  .set-mastery { font-size: 0.58rem; color: var(--terra); font-weight: 700; letter-spacing: 0.04em; margin-top: 1px; }
+
+  /* ── List button ─────────────────────────────────── */
+  .list-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--mist); background: #fff; color: var(--bark);
+    font-size: 1.05rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s; user-select: none;
+  }
+  .list-btn:active { transform: scale(0.91); }
+
+  /* ── Flag button ─────────────────────────────────── */
+  .flag-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--mist); background: #fff; color: var(--bark);
+    font-size: 1.05rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s, background 0.15s, border-color 0.15s; user-select: none;
+  }
+  .flag-btn:active { transform: scale(0.91); }
+  .flag-btn.flagged { background: var(--terra); border-color: var(--terra); }
+
+  /* ── Easy button ─────────────────────────────────── */
+  .easy-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--mist); background: #fff; color: var(--bark);
+    font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s, background 0.15s, border-color 0.15s; user-select: none;
+  }
+  .easy-btn:active { transform: scale(0.91); }
+  .easy-btn.easy { background: var(--sage); border-color: var(--sage); color: #fff; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Español <span>Flashcards · v21</span></h1>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
+      <span class="csb-label">📚 Word Set</span>
+      <span class="csb-name" id="currentSetName">🗣 Everyday</span>
+    </button>
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊 <span id="muteLbl">ON</span></button>
+    <div class="progress-pill" id="progressPill">
+      <span id="pillCount">1 of 30</span>
+      <span id="pillLeft" style="opacity:0.7;font-weight:400;font-size:0.65rem;display:block;line-height:1;margin-top:2px">29 to go</span>
+    </div>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- Set picker modal -->
+<div class="set-modal-overlay" id="setModalOverlay" onclick="handleOverlayClick(event)">
+  <div class="set-modal-sheet" id="setModalSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">Choose a Word Set</div>
+      <button class="sheet-close" onclick="closeSetModal()">✕</button>
+    </div>
+    <div class="set-grid" id="setGrid"></div>
+  </div>
+</div>
+
+<!-- iOS audio unlock banner -->
+<div class="audio-banner" id="audioBanner" onclick="unlockAudio()">
+  👆 Tap here to enable audio pronunciation
+</div>
+
+<!-- Spanish voice tip -->
+<div class="voice-tip" id="voiceTip" style="max-width:700px;margin:8px auto 0;width:calc(100% - 32px)">
+  <strong>💡 Best Spanish voice on iPhone:</strong> Settings → Accessibility → Spoken Content → Voices → Spanish → download <em>Monica</em> or <em>Paulina</em> for the most natural sound.
+</div>
+
+<div class="stage">
+  <div class="card" id="card">
+    <div class="card-body">
+      <!-- Left panel -->
+      <div class="panel-spanish">
+        <div class="panel-label" id="leftPanelLabel">Español</div>
+        <div class="spanish-word" id="spanishWord">hola</div>
+        <div class="pronunciation" id="pronunciation">OH-lah</div>
+        <button class="speak-btn" id="speakBtn" onclick="speakCurrent()">
+          <span class="speak-icon">🔊</span> Replay
+        </button>
+      </div>
+      <!-- Right panel -->
+      <div class="panel-english">
+        <div class="panel-label" id="rightPanelLabel" style="color:var(--sage)">English</div>
+        <div class="english-word" id="englishWord">hello</div>
+        <div class="pronunciation" id="rightPron" style="display:none;margin-top:6px"></div>
+        <div class="english-hint" id="englishHint">waiting…</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <!-- Top row: toggles side by side -->
+  <div class="compact-row">
+    <div class="compact-toggle" onclick="toggleLoop()">
+      <div class="ct-label">🔁 Loop</div>
+      <div class="ct-bottom">
+        <div class="ct-value" id="loopValue">Continuous</div>
+        <div class="toggle-track on" id="loopTrack" style="width:38px;height:22px">
+          <div class="toggle-thumb" style="width:16px;height:16px;top:3px;left:3px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="compact-toggle" onclick="toggleMode()">
+      <div class="ct-label">🔄 Direction</div>
+      <div class="ct-bottom">
+        <div class="ct-value" id="modeValue">ES → EN</div>
+        <div class="toggle-track" id="modeTrack" style="width:38px;height:22px">
+          <div class="toggle-thumb" style="width:16px;height:16px;top:3px;left:3px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bottom row: delays side by side -->
+  <div class="compact-row">
+    <div class="compact-delay">
+      <div class="ct-label">⏱ Reveal</div>
+      <div class="compact-delay-inner">
+        <button class="adj-btn-sm" onclick="adjustDelay('reveal', -0.5)">−</button>
+        <span class="ct-num"><span id="revealDisplay">1.5</span>s</span>
+        <button class="adj-btn-sm" onclick="adjustDelay('reveal', +0.5)">+</button>
+      </div>
+    </div>
+    <div class="compact-delay">
+      <div class="ct-label" style="color:var(--sage)">⏩ Advance</div>
+      <div class="compact-delay-inner">
+        <button class="adj-btn-sm" onclick="adjustDelay('advance', -0.5)">−</button>
+        <span class="ct-num"><span id="advanceDisplay">2.0</span>s</span>
+        <button class="adj-btn-sm" onclick="adjustDelay('advance', +0.5)">+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Action buttons -->
+<div class="action-row">
+  <button class="restart-btn" onclick="restart()" title="Restart deck">↺</button>
+  <button class="list-btn"    onclick="openWordList()" title="Word list">📋</button>
+  <button class="play-btn"    id="playBtn" onclick="togglePlay()">⏸</button>
+  <button class="skip-btn"   onclick="skipCard()" title="Skip to next">⏭</button>
+  <button class="flag-btn"   id="flagBtn" onclick="flagCurrent()" title="Flag as hard">🚩</button>
+  <button class="easy-btn"   id="easyBtn" onclick="markEasy()" title="Mark as easy">✓</button>
+</div>
+
+<!-- Recent words history -->
+<div class="history-wrap" id="historyWrap">
+  <div class="history-label">Recently Studied</div>
+  <div class="history-list" id="historyList"></div>
+</div>
+
+<!-- Word list sheet -->
+<div class="word-list-overlay" id="wordListOverlay" onclick="handleWLOverlayClick(event)">
+  <div class="word-list-sheet" id="wordListSheet">
+    <div class="sheet-handle"></div>
+    <div class="wl-header">
+      <div class="wl-title-block">
+        <div class="wl-title" id="wlTitle">Word List</div>
+        <div class="wl-subtitle" id="wlSubtitle"></div>
+      </div>
+      <div class="wl-actions">
+        <button class="wl-btn danger" id="wlResetBtn" onclick="clearHardWords()">Clear List</button>
+        <button class="wl-btn" onclick="closeWordList()">✕ Close</button>
+      </div>
+    </div>
+    <div id="wordListRows"></div>
+  </div>
+</div>
+
+<!-- Completed overlay -->
+<div class="done-overlay" id="doneOverlay">
+  <div class="done-box">
+    <div class="trophy">🎉</div>
+    <h2>¡Excelente!</h2>
+    <p>You finished all <span id="doneCount">30</span> words.<br>Keep practicing to build fluency!</p>
+    <button class="done-restart" onclick="restart()" style="margin-bottom:10px">Start Again</button>
+  </div>
+</div>
+
+<script>
+// ── Word sets ──────────────────────────────────────────
+const wordSets = [
+  {
+    id: 'everyday',
+    label: '🗣 Everyday',
+    words: [
+      { es: "hola",         pron: "OH-lah",           en: "hello" },
+      { es: "adiós",        pron: "ah-dee-OHS",        en: "goodbye" },
+      { es: "gracias",      pron: "GRAH-see-ahs",      en: "thank you" },
+      { es: "por favor",    pron: "por fah-VOR",        en: "please" },
+      { es: "sí",           pron: "see",               en: "yes" },
+      { es: "no",           pron: "noh",               en: "no" },
+      { es: "agua",         pron: "AH-gwah",           en: "water" },
+      { es: "comida",       pron: "koh-MEE-dah",       en: "food" },
+      { es: "casa",         pron: "KAH-sah",           en: "house" },
+      { es: "perro",        pron: "PEH-rroh",          en: "dog" },
+      { es: "gato",         pron: "GAH-toh",           en: "cat" },
+      { es: "libro",        pron: "LEE-broh",          en: "book" },
+      { es: "tiempo",       pron: "tee-EHM-poh",       en: "time / weather" },
+      { es: "amigo",        pron: "ah-MEE-goh",        en: "friend" },
+      { es: "trabajo",      pron: "trah-BAH-hoh",      en: "work" },
+      { es: "dinero",       pron: "dee-NEH-roh",       en: "money" },
+      { es: "ciudad",       pron: "see-oo-DAHD",       en: "city" },
+      { es: "calle",        pron: "KAH-yeh",           en: "street" },
+      { es: "médico",       pron: "MEH-dee-koh",       en: "doctor" },
+      { es: "tienda",       pron: "tee-EHN-dah",       en: "store" },
+      { es: "familia",      pron: "fah-MEE-lee-ah",    en: "family" },
+      { es: "madre",        pron: "MAH-dreh",          en: "mother" },
+      { es: "padre",        pron: "PAH-dreh",          en: "father" },
+      { es: "hijo",         pron: "EE-hoh",            en: "son" },
+      { es: "hija",         pron: "EE-hah",            en: "daughter" },
+      { es: "grande",       pron: "GRAHN-deh",         en: "big / large" },
+      { es: "pequeño",      pron: "peh-KEN-yoh",       en: "small / little" },
+      { es: "bueno",        pron: "BWEH-noh",          en: "good" },
+      { es: "malo",         pron: "MAH-loh",           en: "bad" },
+      { es: "hablar",       pron: "ah-BLAR",           en: "to speak" },
+    ]
+  },
+  {
+    id: 'questions',
+    label: '❓ Question Words',
+    words: [
+      { es: "¿qué?",          pron: "keh",                en: "what?" },
+      { es: "¿quién?",        pron: "kee-EHN",            en: "who?" },
+      { es: "¿dónde?",        pron: "DOHN-deh",           en: "where?" },
+      { es: "¿cuándo?",       pron: "KWAHN-doh",          en: "when?" },
+      { es: "¿por qué?",      pron: "por KEH",            en: "why?" },
+      { es: "¿cómo?",         pron: "KOH-moh",            en: "how?" },
+      { es: "¿cuál?",         pron: "kwahl",              en: "which?" },
+      { es: "¿cuánto?",       pron: "KWAHN-toh",          en: "how much?" },
+      { es: "¿cuántos?",      pron: "KWAHN-tohs",         en: "how many?" },
+      { es: "¿de dónde?",     pron: "deh DOHN-deh",       en: "from where?" },
+      { es: "¿adónde?",       pron: "ah-DOHN-deh",        en: "to where?" },
+      { es: "¿para qué?",     pron: "PAH-rah keh",        en: "what for?" },
+      { es: "¿con quién?",    pron: "kon kee-EHN",        en: "with whom?" },
+      { es: "¿a qué hora?",   pron: "ah keh OH-rah",      en: "at what time?" },
+    ]
+  },
+  {
+    id: 'numbers',
+    label: '🔢 Numbers',
+    words: [
+      { es: "uno",         pron: "OO-noh",          en: "one" },
+      { es: "dos",         pron: "dohs",             en: "two" },
+      { es: "tres",        pron: "trehs",            en: "three" },
+      { es: "cuatro",      pron: "KWAH-troh",        en: "four" },
+      { es: "cinco",       pron: "SEEN-koh",         en: "five" },
+      { es: "seis",        pron: "says",             en: "six" },
+      { es: "siete",       pron: "see-EH-teh",       en: "seven" },
+      { es: "ocho",        pron: "OH-choh",          en: "eight" },
+      { es: "nueve",       pron: "NWEH-beh",         en: "nine" },
+      { es: "diez",        pron: "dee-EHS",          en: "ten" },
+      { es: "once",        pron: "OHN-seh",          en: "eleven" },
+      { es: "doce",        pron: "DOH-seh",          en: "twelve" },
+      { es: "trece",       pron: "TREH-seh",         en: "thirteen" },
+      { es: "catorce",     pron: "kah-TOR-seh",      en: "fourteen" },
+      { es: "quince",      pron: "KEEN-seh",         en: "fifteen" },
+      { es: "dieciséis",   pron: "dee-eh-see-SAYS",  en: "sixteen" },
+      { es: "diecisiete",  pron: "dee-eh-see-EH-teh",en: "seventeen" },
+      { es: "dieciocho",   pron: "dee-eh-see-OH-choh",en: "eighteen" },
+      { es: "diecinueve",  pron: "dee-eh-see-NWEH-beh",en: "nineteen" },
+      { es: "veinte",      pron: "BAYN-teh",         en: "twenty" },
+    ]
+  },
+  {
+    id: 'colors',
+    label: '🎨 Colors',
+    words: [
+      { es: "rojo",        pron: "RROH-hoh",         en: "red" },
+      { es: "azul",        pron: "ah-SOOL",          en: "blue" },
+      { es: "verde",       pron: "BEHR-deh",         en: "green" },
+      { es: "amarillo",    pron: "ah-mah-REE-yoh",   en: "yellow" },
+      { es: "anaranjado",  pron: "ah-nah-rahn-HAH-doh", en: "orange" },
+      { es: "morado",      pron: "moh-RAH-doh",      en: "purple" },
+      { es: "negro",       pron: "NEH-groh",         en: "black" },
+      { es: "blanco",      pron: "BLAHN-koh",        en: "white" },
+      { es: "gris",        pron: "grees",            en: "gray" },
+      { es: "café",        pron: "kah-FEH",          en: "brown" },
+      { es: "rosado",      pron: "roh-SAH-doh",      en: "pink" },
+      { es: "dorado",      pron: "doh-RAH-doh",      en: "gold" },
+      { es: "plateado",    pron: "plah-teh-AH-doh",  en: "silver" },
+      { es: "claro",       pron: "KLAH-roh",         en: "light" },
+      { es: "oscuro",      pron: "ohs-KOO-roh",      en: "dark" },
+    ]
+  },
+  {
+    id: 'verbs',
+    label: '⚡ Action Verbs',
+    words: [
+      { es: "hablar",      pron: "ah-BLAR",          en: "to speak" },
+      { es: "comer",       pron: "koh-MEHR",         en: "to eat" },
+      { es: "beber",       pron: "beh-BEHR",         en: "to drink" },
+      { es: "ir",          pron: "eer",              en: "to go" },
+      { es: "venir",       pron: "beh-NEER",         en: "to come" },
+      { es: "ver",         pron: "behr",             en: "to see" },
+      { es: "hacer",       pron: "ah-SEHR",          en: "to do / make" },
+      { es: "tener",       pron: "teh-NEHR",         en: "to have" },
+      { es: "querer",      pron: "keh-REHR",         en: "to want" },
+      { es: "poder",       pron: "poh-DEHR",         en: "to be able to" },
+      { es: "saber",       pron: "sah-BEHR",         en: "to know" },
+      { es: "vivir",       pron: "bee-BEER",         en: "to live" },
+      { es: "dormir",      pron: "dor-MEER",         en: "to sleep" },
+      { es: "comprar",     pron: "kohm-PRAR",        en: "to buy" },
+      { es: "caminar",     pron: "kah-mee-NAR",      en: "to walk" },
+      { es: "correr",      pron: "koh-RREHR",        en: "to run" },
+      { es: "leer",        pron: "leh-EHR",          en: "to read" },
+      { es: "escribir",    pron: "ehs-kree-BEER",    en: "to write" },
+      { es: "escuchar",    pron: "ehs-koo-CHAR",     en: "to listen" },
+      { es: "trabajar",    pron: "trah-bah-HAR",     en: "to work" },
+    ]
+  },
+  {
+    id: 'positional',
+    label: '📍 Position Words',
+    words: [
+      { es: "arriba",          pron: "ah-RREE-bah",        en: "up / above" },
+      { es: "abajo",           pron: "ah-BAH-hoh",         en: "down / below" },
+      { es: "adelante",        pron: "ah-deh-LAHN-teh",    en: "in front / ahead" },
+      { es: "atrás",           pron: "ah-TRAHS",           en: "behind / back" },
+      { es: "adentro",         pron: "ah-DEHN-troh",       en: "inside" },
+      { es: "afuera",          pron: "ah-FWEH-rah",        en: "outside" },
+      { es: "encima de",       pron: "ehn-SEE-mah deh",    en: "on top of" },
+      { es: "debajo de",       pron: "deh-BAH-hoh deh",    en: "underneath" },
+      { es: "al lado de",      pron: "ahl LAH-doh deh",    en: "next to / beside" },
+      { es: "entre",           pron: "EHN-treh",           en: "between" },
+      { es: "cerca de",        pron: "SEHR-kah deh",       en: "near / close to" },
+      { es: "lejos de",        pron: "LEH-hohs deh",       en: "far from" },
+      { es: "a la derecha",    pron: "ah lah deh-REH-chah",en: "to the right" },
+      { es: "a la izquierda",  pron: "ah lah ees-kee-EHR-dah", en: "to the left" },
+      { es: "en el centro",    pron: "ehn ehl SEHN-troh",  en: "in the middle" },
+      { es: "alrededor de",    pron: "ahl-reh-deh-DOR deh",en: "around" },
+      { es: "enfrente de",     pron: "ehn-FREHN-teh deh",  en: "across from" },
+      { es: "detrás de",       pron: "deh-TRAHS deh",      en: "behind" },
+      { es: "junto a",         pron: "HOON-toh ah",        en: "next to / alongside" },
+      { es: "en medio de",     pron: "ehn MEH-dee-oh deh", en: "in the middle of" },
+    ]
+  },
+  {
+    id: 'greetings',
+    label: '👋 Greetings',
+    words: [
+      { es: "buenos días",       pron: "BWEH-nohs DEE-ahs",      en: "good morning" },
+      { es: "buenas tardes",     pron: "BWEH-nahs TAR-dehs",     en: "good afternoon" },
+      { es: "buenas noches",     pron: "BWEH-nahs NOH-chehs",    en: "good evening / night" },
+      { es: "¿cómo estás?",      pron: "KOH-moh ehs-TAHS",       en: "how are you?" },
+      { es: "bien, gracias",     pron: "bee-EHN GRAH-see-ahs",   en: "fine, thank you" },
+      { es: "¿y tú?",            pron: "ee too",                 en: "and you?" },
+      { es: "mucho gusto",       pron: "MOO-choh GOOS-toh",      en: "nice to meet you" },
+      { es: "igualmente",        pron: "ee-gwahl-MEHN-teh",      en: "likewise" },
+      { es: "disculpe",          pron: "dees-KOOL-peh",          en: "excuse me" },
+      { es: "lo siento",         pron: "loh see-EHN-toh",        en: "I'm sorry" },
+      { es: "de nada",           pron: "deh NAH-dah",            en: "you're welcome" },
+      { es: "con permiso",       pron: "kon pehr-MEE-soh",       en: "pardon me / with your permission" },
+      { es: "hasta luego",       pron: "AHS-tah LWEH-goh",       en: "see you later" },
+      { es: "hasta mañana",      pron: "AHS-tah mah-NYAH-nah",   en: "see you tomorrow" },
+      { es: "bienvenido",        pron: "bee-ehn-beh-NEE-doh",    en: "welcome" },
+      { es: "¿habla inglés?",    pron: "AH-blah een-GLEHS",      en: "do you speak English?" },
+      { es: "no entiendo",       pron: "noh ehn-tee-EHN-doh",    en: "I don't understand" },
+      { es: "¿puede repetir?",   pron: "PWEH-deh reh-peh-TEER",  en: "can you repeat that?" },
+      { es: "más despacio",      pron: "mahs dehs-PAH-see-oh",   en: "more slowly" },
+      { es: "¿cómo se dice?",    pron: "KOH-moh seh DEE-seh",    en: "how do you say?" },
+    ]
+  },
+  {
+    id: 'days',
+    label: '📅 Days & Months',
+    words: [
+      { es: "lunes",       pron: "LOO-nehs",        en: "Monday" },
+      { es: "martes",      pron: "MAR-tehs",         en: "Tuesday" },
+      { es: "miércoles",   pron: "mee-EHR-koh-lehs", en: "Wednesday" },
+      { es: "jueves",      pron: "HWEH-behs",        en: "Thursday" },
+      { es: "viernes",     pron: "bee-EHR-nehs",     en: "Friday" },
+      { es: "sábado",      pron: "SAH-bah-doh",      en: "Saturday" },
+      { es: "domingo",     pron: "doh-MEEN-goh",     en: "Sunday" },
+      { es: "enero",       pron: "eh-NEH-roh",       en: "January" },
+      { es: "febrero",     pron: "feh-BREH-roh",     en: "February" },
+      { es: "marzo",       pron: "MAR-soh",          en: "March" },
+      { es: "abril",       pron: "ah-BREEL",         en: "April" },
+      { es: "mayo",        pron: "MAH-yoh",          en: "May" },
+      { es: "junio",       pron: "HOO-nee-oh",       en: "June" },
+      { es: "julio",       pron: "HOO-lee-oh",       en: "July" },
+      { es: "agosto",      pron: "ah-GOHS-toh",      en: "August" },
+      { es: "septiembre",  pron: "sehp-tee-EHM-breh",en: "September" },
+      { es: "octubre",     pron: "ohk-TOO-breh",     en: "October" },
+      { es: "noviembre",   pron: "noh-bee-EHM-breh", en: "November" },
+      { es: "diciembre",   pron: "dee-see-EHM-breh", en: "December" },
+    ]
+  },
+  {
+    id: 'food',
+    label: '🍽 Food & Drink',
+    words: [
+      { es: "pan",           pron: "pahn",              en: "bread" },
+      { es: "leche",         pron: "LEH-cheh",          en: "milk" },
+      { es: "café",          pron: "kah-FEH",           en: "coffee" },
+      { es: "té",            pron: "teh",               en: "tea" },
+      { es: "jugo",          pron: "HOO-goh",           en: "juice" },
+      { es: "huevo",         pron: "WEH-boh",           en: "egg" },
+      { es: "carne",         pron: "KAR-neh",           en: "meat" },
+      { es: "pollo",         pron: "POH-yoh",           en: "chicken" },
+      { es: "pescado",       pron: "pehs-KAH-doh",      en: "fish" },
+      { es: "arroz",         pron: "ah-RROHS",          en: "rice" },
+      { es: "frijoles",      pron: "free-HOH-lehs",     en: "beans" },
+      { es: "verduras",      pron: "behr-DOO-rahs",     en: "vegetables" },
+      { es: "fruta",         pron: "FROO-tah",          en: "fruit" },
+      { es: "manzana",       pron: "mahn-SAH-nah",      en: "apple" },
+      { es: "naranja",       pron: "nah-RAHN-hah",      en: "orange" },
+      { es: "ensalada",      pron: "ehn-sah-LAH-dah",   en: "salad" },
+      { es: "sopa",          pron: "SOH-pah",           en: "soup" },
+      { es: "queso",         pron: "KEH-soh",           en: "cheese" },
+      { es: "azúcar",        pron: "ah-SOO-kar",        en: "sugar" },
+      { es: "sal",           pron: "sahl",              en: "salt" },
+      { es: "la cuenta",     pron: "lah KWEHN-tah",     en: "the bill / check" },
+      { es: "menú",          pron: "meh-NOO",           en: "menu" },
+    ]
+  },
+  {
+    id: 'body',
+    label: '🧍 Body Parts',
+    words: [
+      { es: "cabeza",      pron: "kah-BEH-sah",      en: "head" },
+      { es: "cara",        pron: "KAH-rah",           en: "face" },
+      { es: "ojo",         pron: "OH-hoh",            en: "eye" },
+      { es: "oído",        pron: "oh-EE-doh",         en: "ear" },
+      { es: "nariz",       pron: "nah-REES",          en: "nose" },
+      { es: "boca",        pron: "BOH-kah",           en: "mouth" },
+      { es: "diente",      pron: "dee-EHN-teh",       en: "tooth" },
+      { es: "cuello",      pron: "KWEH-yoh",          en: "neck" },
+      { es: "hombro",      pron: "OHM-broh",          en: "shoulder" },
+      { es: "brazo",       pron: "BRAH-soh",          en: "arm" },
+      { es: "mano",        pron: "MAH-noh",           en: "hand" },
+      { es: "dedo",        pron: "DEH-doh",           en: "finger" },
+      { es: "pecho",       pron: "PEH-choh",          en: "chest" },
+      { es: "espalda",     pron: "ehs-PAHL-dah",      en: "back" },
+      { es: "estómago",    pron: "ehs-TOH-mah-goh",   en: "stomach" },
+      { es: "pierna",      pron: "pee-EHR-nah",       en: "leg" },
+      { es: "rodilla",     pron: "rroh-DEE-yah",      en: "knee" },
+      { es: "pie",         pron: "pee-EH",            en: "foot" },
+      { es: "corazón",     pron: "koh-rah-SOHN",      en: "heart" },
+      { es: "sangre",      pron: "SAHN-greh",         en: "blood" },
+    ]
+  },
+  {
+    id: 'weather',
+    label: '🌤 Weather',
+    words: [
+      { es: "sol",             pron: "sohl",               en: "sun" },
+      { es: "lluvia",          pron: "YOO-bee-ah",         en: "rain" },
+      { es: "nieve",           pron: "nee-EH-beh",         en: "snow" },
+      { es: "viento",          pron: "bee-EHN-toh",        en: "wind" },
+      { es: "nube",            pron: "NOO-beh",            en: "cloud" },
+      { es: "tormenta",        pron: "tor-MEHN-tah",       en: "storm" },
+      { es: "niebla",          pron: "nee-EH-blah",        en: "fog" },
+      { es: "calor",           pron: "kah-LOR",            en: "heat / hot" },
+      { es: "frío",            pron: "FREE-oh",            en: "cold" },
+      { es: "templado",        pron: "tehm-PLAH-doh",      en: "mild / warm" },
+      { es: "húmedo",          pron: "OO-meh-doh",         en: "humid" },
+      { es: "seco",            pron: "SEH-koh",            en: "dry" },
+      { es: "¿qué tiempo hace?",pron: "keh tee-EHM-poh AH-seh", en: "what's the weather like?" },
+      { es: "hace sol",        pron: "AH-seh sohl",        en: "it's sunny" },
+      { es: "está nublado",    pron: "ehs-TAH noo-BLAH-doh",en: "it's cloudy" },
+      { es: "va a llover",     pron: "bah ah yoh-BEHR",    en: "it's going to rain" },
+      { es: "temperatura",     pron: "tehm-peh-rah-TOO-rah",en: "temperature" },
+      { es: "pronóstico",      pron: "proh-NOHS-tee-koh",  en: "forecast" },
+    ]
+  },
+  {
+    id: 'travel',
+    label: '✈️ Travel',
+    words: [
+      { es: "aeropuerto",      pron: "ah-eh-roh-PWEHR-toh",  en: "airport" },
+      { es: "avión",           pron: "ah-bee-OHN",           en: "airplane" },
+      { es: "pasaporte",       pron: "pah-sah-POR-teh",      en: "passport" },
+      { es: "maleta",          pron: "mah-LEH-tah",          en: "suitcase" },
+      { es: "hotel",           pron: "oh-TEHL",              en: "hotel" },
+      { es: "habitación",      pron: "ah-bee-tah-see-OHN",   en: "room" },
+      { es: "reservación",     pron: "reh-sehr-bah-see-OHN", en: "reservation" },
+      { es: "taxi",            pron: "TAK-see",              en: "taxi" },
+      { es: "autobús",         pron: "ow-toh-BOOS",          en: "bus" },
+      { es: "tren",            pron: "trehn",                en: "train" },
+      { es: "estación",        pron: "ehs-tah-see-OHN",      en: "station" },
+      { es: "boleto",          pron: "boh-LEH-toh",          en: "ticket" },
+      { es: "mapa",            pron: "MAH-pah",              en: "map" },
+      { es: "turista",         pron: "too-REES-tah",         en: "tourist" },
+      { es: "aduana",          pron: "ah-DWAH-nah",          en: "customs" },
+      { es: "equipaje",        pron: "eh-kee-PAH-heh",       en: "luggage / baggage" },
+      { es: "siga derecho",    pron: "SEE-gah deh-REH-choh", en: "go straight" },
+      { es: "doble a la derecha", pron: "DOH-bleh ah lah deh-REH-chah", en: "turn right" },
+      { es: "doble a la izquierda", pron: "DOH-bleh ah lah ees-kee-EHR-dah", en: "turn left" },
+      { es: "¿dónde está?",    pron: "DOHN-deh ehs-TAH",     en: "where is it?" },
+    ]
+  },
+  {
+    id: 'shopping',
+    label: '🛍 Shopping',
+    words: [
+      { es: "¿cuánto cuesta?", pron: "KWAHN-toh KWEHS-tah",  en: "how much does it cost?" },
+      { es: "caro",            pron: "KAH-roh",              en: "expensive" },
+      { es: "barato",          pron: "bah-RAH-toh",          en: "cheap / inexpensive" },
+      { es: "precio",          pron: "PREH-see-oh",          en: "price" },
+      { es: "descuento",       pron: "dehs-KWEHN-toh",       en: "discount" },
+      { es: "recibo",          pron: "reh-SEE-boh",          en: "receipt" },
+      { es: "talla",           pron: "TAH-yah",              en: "size (clothing)" },
+      { es: "efectivo",        pron: "eh-fehk-TEE-boh",      en: "cash" },
+      { es: "tarjeta de crédito", pron: "tar-HEH-tah deh KREH-dee-toh", en: "credit card" },
+      { es: "tienda",          pron: "tee-EHN-dah",          en: "store / shop" },
+      { es: "mercado",         pron: "mehr-KAH-doh",         en: "market" },
+      { es: "supermercado",    pron: "soo-pehr-mehr-KAH-doh",en: "supermarket" },
+      { es: "bolsa",           pron: "BOHL-sah",             en: "bag" },
+      { es: "cambio",          pron: "KAHM-bee-oh",          en: "change (money)" },
+      { es: "¿tiene...?",      pron: "tee-EH-neh",           en: "do you have...?" },
+      { es: "quiero comprar",  pron: "kee-EH-roh kohm-PRAR", en: "I want to buy" },
+      { es: "solo estoy mirando", pron: "SOH-loh ehs-TOY mee-RAHN-doh", en: "I'm just looking" },
+    ]
+  },
+  {
+    id: 'time',
+    label: '🕐 Time Expressions',
+    words: [
+      { es: "hoy",             pron: "oy",                  en: "today" },
+      { es: "mañana",          pron: "mah-NYAH-nah",        en: "tomorrow" },
+      { es: "ayer",            pron: "ah-YEHR",             en: "yesterday" },
+      { es: "ahora",           pron: "ah-OH-rah",           en: "now" },
+      { es: "después",         pron: "dehs-PWEHS",          en: "later / after" },
+      { es: "antes",           pron: "AHN-tehs",            en: "before" },
+      { es: "pronto",          pron: "PROHN-toh",           en: "soon" },
+      { es: "ya",              pron: "yah",                 en: "already / now" },
+      { es: "todavía",         pron: "toh-dah-BEE-ah",      en: "still / yet" },
+      { es: "siempre",         pron: "see-EHM-preh",        en: "always" },
+      { es: "nunca",           pron: "NOON-kah",            en: "never" },
+      { es: "a veces",         pron: "ah BEH-sehs",         en: "sometimes" },
+      { es: "de vez en cuando",pron: "deh behs ehn KWAHN-doh", en: "once in a while" },
+      { es: "esta semana",     pron: "EHS-tah seh-MAH-nah", en: "this week" },
+      { es: "el año pasado",   pron: "ehl AH-nyoh pah-SAH-doh", en: "last year" },
+      { es: "el próximo mes",  pron: "ehl PROHK-see-moh mehs", en: "next month" },
+      { es: "¿qué hora es?",   pron: "keh OH-rah ehs",      en: "what time is it?" },
+      { es: "temprano",        pron: "tehm-PRAH-noh",       en: "early" },
+      { es: "tarde",           pron: "TAR-deh",             en: "late" },
+      { es: "medianoche",      pron: "meh-dee-ah-NOH-cheh", en: "midnight" },
+    ]
+  },
+  {
+    id: 'adjectives',
+    label: '✨ Adjectives',
+    words: [
+      { es: "feliz",           pron: "feh-LEES",            en: "happy" },
+      { es: "triste",          pron: "TREES-teh",           en: "sad" },
+      { es: "cansado",         pron: "kahn-SAH-doh",        en: "tired" },
+      { es: "hambriento",      pron: "ahm-bree-EHN-toh",    en: "hungry" },
+      { es: "sediento",        pron: "seh-dee-EHN-toh",     en: "thirsty" },
+      { es: "caliente",        pron: "kah-lee-EHN-teh",     en: "hot / warm" },
+      { es: "frío",            pron: "FREE-oh",             en: "cold" },
+      { es: "joven",           pron: "HOH-behn",            en: "young" },
+      { es: "viejo",           pron: "bee-EH-hoh",          en: "old" },
+      { es: "rápido",          pron: "RRAH-pee-doh",        en: "fast" },
+      { es: "lento",           pron: "LEHN-toh",            en: "slow" },
+      { es: "fácil",           pron: "FAH-seel",            en: "easy" },
+      { es: "difícil",         pron: "dee-FEE-seel",        en: "difficult" },
+      { es: "limpio",          pron: "LEEM-pee-oh",         en: "clean" },
+      { es: "sucio",           pron: "SOO-see-oh",          en: "dirty" },
+      { es: "lleno",           pron: "YEH-noh",             en: "full" },
+      { es: "vacío",           pron: "bah-SEE-oh",          en: "empty" },
+      { es: "nuevo",           pron: "NWEH-boh",            en: "new" },
+      { es: "bonito",          pron: "boh-NEE-toh",         en: "pretty / nice" },
+      { es: "interesante",     pron: "een-teh-reh-SAHN-teh",en: "interesting" },
+    ]
+  },
+  {
+    id: 'prepositions',
+    label: '🔗 Prepositions',
+    words: [
+      { es: "con",             pron: "kohn",                en: "with" },
+      { es: "sin",             pron: "seen",                en: "without" },
+      { es: "para",            pron: "PAH-rah",             en: "for / in order to" },
+      { es: "por",             pron: "por",                 en: "for / because of / by" },
+      { es: "de",              pron: "deh",                 en: "of / from" },
+      { es: "a",               pron: "ah",                  en: "to / at" },
+      { es: "en",              pron: "ehn",                 en: "in / on / at" },
+      { es: "desde",           pron: "DEHS-deh",            en: "from / since" },
+      { es: "hasta",           pron: "AHS-tah",             en: "until / up to" },
+      { es: "durante",         pron: "doo-RAHN-teh",        en: "during" },
+      { es: "antes de",        pron: "AHN-tehs deh",        en: "before" },
+      { es: "después de",      pron: "dehs-PWEHS deh",      en: "after" },
+      { es: "sobre",           pron: "SOH-breh",            en: "about / over" },
+      { es: "según",           pron: "seh-GOON",            en: "according to" },
+      { es: "contra",          pron: "KOHN-trah",           en: "against" },
+      { es: "hacia",           pron: "AH-see-ah",           en: "toward" },
+      { es: "entre",           pron: "EHN-treh",            en: "between / among" },
+      { es: "excepto",         pron: "ehk-SEHP-toh",        en: "except" },
+    ]
+  },
+  {
+    id: 'conjunctions',
+    label: '🔀 Connectors',
+    words: [
+      { es: "y",               pron: "ee",                  en: "and" },
+      { es: "pero",            pron: "PEH-roh",             en: "but" },
+      { es: "o",               pron: "oh",                  en: "or" },
+      { es: "porque",          pron: "por-KEH",             en: "because" },
+      { es: "entonces",        pron: "ehn-TOHN-sehs",       en: "so / then" },
+      { es: "aunque",          pron: "OW-nkeh",             en: "although / even though" },
+      { es: "si",              pron: "see",                 en: "if" },
+      { es: "cuando",          pron: "KWAHN-doh",           en: "when" },
+      { es: "que",             pron: "keh",                 en: "that / which" },
+      { es: "como",            pron: "KOH-moh",             en: "as / like / how" },
+      { es: "sin embargo",     pron: "seen ehm-BAR-goh",    en: "however / nevertheless" },
+      { es: "además",          pron: "ah-deh-MAHS",         en: "furthermore / also" },
+      { es: "por lo tanto",    pron: "por loh TAHN-toh",    en: "therefore" },
+      { es: "ni...ni",         pron: "nee...nee",           en: "neither...nor" },
+      { es: "tanto...como",    pron: "TAHN-toh...KOH-moh",  en: "both...and" },
+      { es: "mientras",        pron: "mee-EHN-trahs",       en: "while / whereas" },
+      { es: "a menos que",     pron: "ah MEH-nohs keh",     en: "unless" },
+      { es: "así que",         pron: "ah-SEE keh",          en: "so / thus" },
+    ]
+  },
+  {
+    id: 'emotions',
+    label: '❤️ Emotions',
+    words: [
+      { es: "feliz",           pron: "feh-LEES",            en: "happy" },
+      { es: "triste",          pron: "TREES-teh",           en: "sad" },
+      { es: "enojado",         pron: "eh-noh-HAH-doh",      en: "angry" },
+      { es: "emocionado",      pron: "eh-moh-see-oh-NAH-doh",en: "excited" },
+      { es: "aburrido",        pron: "ah-boo-RREE-doh",     en: "bored" },
+      { es: "nervioso",        pron: "nehr-bee-OH-soh",     en: "nervous" },
+      { es: "sorprendido",     pron: "sor-prehn-DEE-doh",   en: "surprised" },
+      { es: "asustado",        pron: "ah-soos-TAH-doh",     en: "scared" },
+      { es: "orgulloso",       pron: "or-goo-YOH-soh",      en: "proud" },
+      { es: "avergonzado",     pron: "ah-behr-gohn-SAH-doh",en: "embarrassed" },
+      { es: "confundido",      pron: "kohn-foon-DEE-doh",   en: "confused" },
+      { es: "tranquilo",       pron: "trahn-KEE-loh",       en: "calm / relaxed" },
+      { es: "estresado",       pron: "ehs-treh-SAH-doh",    en: "stressed" },
+      { es: "enamorado",       pron: "eh-nah-moh-RAH-doh",  en: "in love" },
+      { es: "celoso",          pron: "seh-LOH-soh",         en: "jealous" },
+      { es: "agradecido",      pron: "ah-grah-deh-SEE-doh", en: "grateful" },
+      { es: "esperanzado",     pron: "ehs-peh-rahn-SAH-doh",en: "hopeful" },
+      { es: "solitario",       pron: "soh-lee-TAH-ree-oh",  en: "lonely" },
+    ]
+  },
+  {
+    id: 'animals',
+    label: '🐾 Animals',
+    words: [
+      { es: "perro",           pron: "PEH-rroh",            en: "dog" },
+      { es: "gato",            pron: "GAH-toh",             en: "cat" },
+      { es: "caballo",         pron: "kah-BAH-yoh",         en: "horse" },
+      { es: "vaca",            pron: "BAH-kah",             en: "cow" },
+      { es: "cerdo",           pron: "SEHR-doh",            en: "pig" },
+      { es: "oveja",           pron: "oh-BEH-hah",          en: "sheep" },
+      { es: "pollo",           pron: "POH-yoh",             en: "chicken" },
+      { es: "pájaro",          pron: "PAH-hah-roh",         en: "bird" },
+      { es: "pez",             pron: "pehs",                en: "fish" },
+      { es: "serpiente",       pron: "sehr-pee-EHN-teh",    en: "snake" },
+      { es: "rana",            pron: "RRAH-nah",            en: "frog" },
+      { es: "mariposa",        pron: "mah-ree-POH-sah",     en: "butterfly" },
+      { es: "abeja",           pron: "ah-BEH-hah",          en: "bee" },
+      { es: "león",            pron: "leh-OHN",             en: "lion" },
+      { es: "tigre",           pron: "TEE-greh",            en: "tiger" },
+      { es: "elefante",        pron: "eh-leh-FAHN-teh",     en: "elephant" },
+      { es: "mono",            pron: "MOH-noh",             en: "monkey" },
+      { es: "oso",             pron: "OH-soh",              en: "bear" },
+      { es: "lobo",            pron: "LOH-boh",             en: "wolf" },
+      { es: "conejo",          pron: "koh-NEH-hoh",         en: "rabbit" },
+    ]
+  },
+  {
+    id: 'house',
+    label: '🏠 Around the House',
+    words: [
+      { es: "cocina",          pron: "koh-SEE-nah",         en: "kitchen" },
+      { es: "sala",            pron: "SAH-lah",             en: "living room" },
+      { es: "dormitorio",      pron: "dor-mee-TOH-ree-oh",  en: "bedroom" },
+      { es: "baño",            pron: "BAH-nyoh",            en: "bathroom" },
+      { es: "comedor",         pron: "koh-meh-DOR",         en: "dining room" },
+      { es: "jardín",          pron: "har-DEEN",            en: "garden / yard" },
+      { es: "puerta",          pron: "PWEHR-tah",           en: "door" },
+      { es: "ventana",         pron: "behn-TAH-nah",        en: "window" },
+      { es: "pared",           pron: "pah-REHD",            en: "wall" },
+      { es: "suelo",           pron: "SWEH-loh",            en: "floor" },
+      { es: "techo",           pron: "TEH-choh",            en: "ceiling / roof" },
+      { es: "escalera",        pron: "ehs-kah-LEH-rah",     en: "stairs" },
+      { es: "mesa",            pron: "MEH-sah",             en: "table" },
+      { es: "silla",           pron: "SEE-yah",             en: "chair" },
+      { es: "cama",            pron: "KAH-mah",             en: "bed" },
+      { es: "sofá",            pron: "soh-FAH",             en: "sofa / couch" },
+      { es: "nevera",          pron: "neh-BEH-rah",         en: "refrigerator" },
+      { es: "estufa",          pron: "ehs-TOO-fah",         en: "stove" },
+      { es: "lámpara",         pron: "LAHM-pah-rah",        en: "lamp" },
+      { es: "espejo",          pron: "ehs-PEH-hoh",         en: "mirror" },
+    ]
+  },
+];
+
+// ── Flag system ────────────────────────────────────────
+// Key per word: "setId::es"
+let flaggedKeys = new Set();
+
+function wordKey(setId, word) { return `${setId}::${word.es}`; }
+
+function isFlagged(setId, word) { return flaggedKeys.has(wordKey(setId, word)); }
+
+function setFlag(setId, word, val) {
+  const k = wordKey(setId, word);
+  if (val) flaggedKeys.add(k); else flaggedKeys.delete(k);
+  saveFlags();
+}
+
+function toggleFlag(setId, word) {
+  setFlag(setId, word, !isFlagged(setId, word));
+}
+
+function saveFlags() {
+  try { localStorage.setItem('espFlagged', JSON.stringify([...flaggedKeys])); } catch(e) {}
+}
+
+function loadFlags() {
+  try {
+    const raw = localStorage.getItem('espFlagged');
+    if (raw) flaggedKeys = new Set(JSON.parse(raw));
+  } catch(e) {}
+}
+
+loadFlags();
+
+// Build "Flagged / Hard Words" dynamic set
+const HARD_ID = 'hard';
+function getFlaggedWords() {
+  const out = [];
+  wordSets.forEach(s => {
+    if (s.id === HARD_ID) return;
+    s.words.forEach(w => {
+      if (isFlagged(s.id, w)) out.push({ ...w, _setId: s.id });
+    });
+  });
+  return out;
+}
+
+// Prepend the hard words set entry (words computed dynamically)
+wordSets.unshift({ id: HARD_ID, label: '🚩 Hard Words', words: [] });
+
+// ── Active set ─────────────────────────────────────────
+let activeSetIndex = 1; // start on Everyday (index 1 after prepend)
+let activeSetId    = wordSets[1].id;
+let words          = wordSets[1].words;
+
+function getActiveSetId() {
+  return wordSets[activeSetIndex].id === HARD_ID ? HARD_ID : wordSets[activeSetIndex].id;
+}
+
+// Word key for a word in current context (hard set words carry _setId)
+function currentWordKey(word) {
+  const sid = word._setId || getActiveSetId();
+  return wordKey(sid, word);
+}
+
+function currentWordSetId(word) {
+  return word._setId || getActiveSetId();
+}
+
+// ── Set modal ──────────────────────────────────────────
+const setModalOverlay  = document.getElementById('setModalOverlay');
+const setGrid          = document.getElementById('setGrid');
+const currentSetNameEl = document.getElementById('currentSetName');
+
+function buildSetGrid() {
+  setGrid.innerHTML = '';
+  wordSets.forEach((set, i) => {
+    const isHard  = set.id === HARD_ID;
+    const wList   = isHard ? getFlaggedWords() : set.words;
+    const total   = wList.length;
+    const flagged = isHard ? total : wList.filter(w => isFlagged(set.id, w)).length;
+    const emoji   = set.label.match(/^\S+/)[0];
+    const name    = set.label.replace(/^\S+\s*/, '');
+    const card    = document.createElement('div');
+    card.className = 'set-card' + (i === activeSetIndex ? ' active' : '');
+    card.id        = `setCard${i}`;
+    const badgeHtml = isHard
+      ? `<div class="set-mastery">${total} flagged word${total !== 1 ? 's' : ''}</div>`
+      : (flagged > 0 ? `<div class="set-mastery">🚩 ${flagged} flagged</div>` : `<div class="set-mastery" style="color:#aaa">${total} words</div>`);
+    card.innerHTML =
+      `<div class="set-card-emoji">${emoji}</div>` +
+      `<div class="set-card-name">${name}</div>` +
+      `<div class="set-card-count">${total} words</div>` +
+      badgeHtml;
+    card.onclick = () => selectSet(i);
+    setGrid.appendChild(card);
+  });
+}
+
+buildSetGrid();
+
+function openSetModal() {
+  buildSetGrid(); // refresh mastery counts
+  setModalOverlay.classList.add('open');
+  if (isPlaying) { clearAllTimers(); synth.cancel(); }
+}
+
+function closeSetModal() {
+  setModalOverlay.classList.remove('open');
+  if (isPlaying) {
+    const revealed = englishWordEl.classList.contains('revealed');
+    if (!revealed) startRevealPhase(); else startAdvancePhase();
+  }
+}
+
+function handleOverlayClick(e) {
+  if (e.target === setModalOverlay) closeSetModal();
+}
+
+function selectSet(i) {
+  activeSetIndex = i;
+  const set = wordSets[i];
+  words = set.id === HARD_ID ? getFlaggedWords() : set.words;
+  currentSetNameEl.textContent = set.label;
+  try { localStorage.setItem('espActiveSet', set.id); } catch(e) {}
+  document.querySelectorAll('.set-card').forEach((c, idx) =>
+    c.classList.toggle('active', idx === i));
+  closeSetModal();
+  ++speechGen; synth.cancel(); clearHistory();
+  easyWords.clear();
+  index = 0; isPlaying = true;
+  playBtn.textContent = '⏸';
+  doneOverlay.classList.remove('show');
+  updateFlagBtn();
+  if (words.length === 0) {
+    showNoWords(); return;
+  }
+  showCard(index);
+  startRevealPhase();
+}
+
+// ── Word list sheet ─────────────────────────────────────
+const wordListOverlay = document.getElementById('wordListOverlay');
+const wordListRows    = document.getElementById('wordListRows');
+const wlTitle         = document.getElementById('wlTitle');
+const wlSubtitle      = document.getElementById('wlSubtitle');
+
+function openWordList() {
+  const set = wordSets[activeSetIndex];
+  const isHard = set.id === HARD_ID;
+  wlTitle.textContent = set.label;
+  document.getElementById('wlResetBtn').style.display = isHard ? '' : 'none';
+  renderWordListRows();
+  wordListOverlay.classList.add('open');
+  if (isPlaying) { clearAllTimers(); synth.cancel(); }
+}
+
+function closeWordList() {
+  wordListOverlay.classList.remove('open');
+  if (isPlaying) {
+    const revealed = englishWordEl.classList.contains('revealed');
+    if (!revealed) startRevealPhase(); else startAdvancePhase();
+  }
+}
+
+function handleWLOverlayClick(e) {
+  if (e.target === wordListOverlay) closeWordList();
+}
+
+function renderWordListRows() {
+  const set    = wordSets[activeSetIndex];
+  const isHard = set.id === HARD_ID;
+  const list   = isHard ? getFlaggedWords() : set.words;
+  const fCount = list.filter(w => isFlagged(w._setId || set.id, w)).length;
+  wlSubtitle.textContent = isHard
+    ? `${list.length} flagged word${list.length !== 1 ? 's' : ''}`
+    : (fCount > 0 ? `${fCount} flagged as hard` : `${list.length} words`);
+  wordListRows.innerHTML = '';
+  list.forEach((w) => {
+    const sid     = w._setId || set.id;
+    const flagged = isFlagged(sid, w);
+    const row     = document.createElement('div');
+    row.className = 'word-row' + (flagged ? ' flagged' : '');
+    row.innerHTML =
+      `<div class="word-row-check">🚩</div>` +
+      `<div class="word-row-text">` +
+        `<div class="word-row-es">${w.es}</div>` +
+        `<div class="word-row-sub">${w.pron}</div>` +
+      `</div>` +
+      `<div class="word-row-en">${w.en}</div>`;
+    row.onclick = () => {
+      toggleFlag(sid, w);
+      renderWordListRows();
+      renderHistory();
+      buildSetGrid();
+      if (set.id === HARD_ID) words = getFlaggedWords();
+      updateFlagBtn();
+    };
+    wordListRows.appendChild(row);
+  });
+}
+
+function clearHardWords() {
+  // Remove all flags
+  flaggedKeys.clear();
+  saveFlags();
+  words = [];
+  renderWordListRows();
+  buildSetGrid();
+  renderHistory();
+  closeWordList();
+  showNoWords();
+}
+
+function showNoWords() {
+  resetRings();
+  progressFill.style.width = '0%';
+  document.querySelector('#doneOverlay h2').textContent = '¡Lista Vacía!';
+  document.querySelector('#doneOverlay p').innerHTML =
+    'No flagged words yet.<br>Study any set and tap 🚩 to add hard words here.';
+  doneOverlay.classList.add('show');
+}
+
+// ── State ──────────────────────────────────────────────
+let index        = 0;
+let revealDelay  = 1.5;
+let advanceDelay = 2.0;
+let isPlaying    = true;
+let isMuted      = false;
+let audioUnlocked= false;
+let studyMode    = 'es-to-en';
+let revealTimer  = null;
+let advanceTimer = null;
+let ringAnimId   = null;
+let ringStart    = null;
+let ringPhase    = null;
+let ringDuration = 0;
+let speechGen    = 0; // incremented each sequence; stale callbacks check this
+let loopEnabled  = true;
+
+// ── Easy words (in-memory only, cleared on set switch) ─
+let easyWords = new Set();
+
+const CIRC = 113.1;
+const spanishWordEl   = document.getElementById('spanishWord');
+const pronunciationEl = document.getElementById('pronunciation');
+const englishWordEl   = document.getElementById('englishWord');
+const englishHintEl   = document.getElementById('englishHint');
+const progressPill    = document.getElementById('progressPill');
+const progressFill    = document.getElementById('progressFill');
+const playBtn         = document.getElementById('playBtn');
+const doneOverlay     = document.getElementById('doneOverlay');
+const revealDisplay   = document.getElementById('revealDisplay');
+const advanceDisplay  = document.getElementById('advanceDisplay');
+const cardEl          = document.getElementById('card');
+const muteBtn         = document.getElementById('muteBtn');
+const speakBtn        = document.getElementById('speakBtn');
+const audioBanner     = document.getElementById('audioBanner');
+const voiceTip        = document.getElementById('voiceTip');
+const leftPanelLabel  = document.getElementById('leftPanelLabel');
+const rightPanelLabel = document.getElementById('rightPanelLabel');
+const rightPronEl     = document.getElementById('rightPron');
+const flagBtn         = document.getElementById('flagBtn');
+const easyBtn         = document.getElementById('easyBtn');
+
+// ── Speech setup ───────────────────────────────────────
+const synth = window.speechSynthesis;
+let spanishVoice = null;
+
+let englishVoice = null;
+
+function loadVoices() {
+  const voices = synth.getVoices();
+  spanishVoice =
+    voices.find(v => v.lang === 'es-MX') ||
+    voices.find(v => v.lang === 'es-ES') ||
+    voices.find(v => v.lang.startsWith('es')) ||
+    null;
+  englishVoice =
+    voices.find(v => v.lang === 'en-US') ||
+    voices.find(v => v.lang.startsWith('en')) ||
+    null;
+  if (!spanishVoice) {
+    voiceTip.classList.add('show');
+    setTimeout(() => {
+      voiceTip.classList.add('fade-out');
+      setTimeout(() => voiceTip.classList.remove('show', 'fade-out'), 1000);
+    }, 4000);
+  }
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+loadVoices();
+
+// iOS requires a user gesture before speech API works
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+function checkAudioUnlock() {
+  if (isIOS && !audioUnlocked) {
+    audioBanner.classList.add('show');
+  } else {
+    audioUnlocked = true;
+  }
+}
+
+function unlockAudio() {
+  const u = new SpeechSynthesisUtterance('');
+  u.volume = 0;
+  synth.speak(u);
+  audioUnlocked = true;
+  audioBanner.classList.remove('show');
+  // Re-trigger the reveal phase now that audio is unlocked
+  startRevealPhase();
+}
+
+function speakSpanishThen(text, gen, onFinished) {
+  // Speak the question word, then call onFinished — but only if this
+  // generation is still current (guards against stale callbacks).
+  if (isMuted || !audioUnlocked || !synth) { onFinished(gen); return; }
+  synth.cancel();
+
+  const isEsMode = studyMode === 'es-to-en';
+  const spokenText = (isEsMode ? text : words[index].en).replace(/\s*\/\s*/g, ', ');
+  const utt = new SpeechSynthesisUtterance(spokenText);
+  if (isEsMode) {
+    utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
+    utt.rate  = 0.88;
+    if (spanishVoice) utt.voice = spanishVoice;
+  } else {
+    utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+    utt.rate  = 0.92;
+    if (englishVoice) utt.voice = englishVoice;
+  }
+  utt.pitch = 1.0;
+  utt.onstart = () => speakBtn.classList.add('speaking');
+  utt.onend   = () => { speakBtn.classList.remove('speaking'); onFinished(gen); };
+  utt.onerror = (e) => {
+    speakBtn.classList.remove('speaking');
+    // 'interrupted' means we cancelled intentionally — don't fire callback
+    if (e.error !== 'interrupted' && e.error !== 'canceled') onFinished(gen);
+  };
+  synth.speak(utt);
+}
+
+function speakWord(text, lang = 'es') {
+  // Standalone playback (replay button, English reveal) — no callback.
+  if (isMuted || !audioUnlocked || !synth) return;
+  synth.cancel();
+  const spokenText = text.replace(/\s*\/\s*/g, ', ');
+  const utt = new SpeechSynthesisUtterance(spokenText);
+  if (lang === 'es') {
+    utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
+    utt.rate  = 0.88;
+    if (spanishVoice) utt.voice = spanishVoice;
+  } else {
+    utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+    utt.rate  = 0.92;
+    if (englishVoice) utt.voice = englishVoice;
+  }
+  utt.pitch = 1.0;
+  utt.onstart = () => { if (lang === 'es') speakBtn.classList.add('speaking'); };
+  utt.onend   = () => speakBtn.classList.remove('speaking');
+  utt.onerror = () => speakBtn.classList.remove('speaking');
+  synth.speak(utt);
+}
+
+function speakCurrent() {
+  if (!audioUnlocked && isIOS) { unlockAudio(); return; }
+  if (studyMode === 'es-to-en') {
+    speakWord(words[index].es, 'es');
+  } else {
+    speakWord(words[index].en, 'en');
+  }
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  muteBtn.innerHTML = isMuted ? '🔇 <span>OFF</span>' : '🔊 <span>ON</span>';
+  muteBtn.classList.toggle('muted', isMuted);
+  if (isMuted) {
+    synth.cancel();
+    // Restart current phase with muted minimums applied
+    if (isPlaying) {
+      const revealed = englishWordEl.classList.contains('revealed');
+      ++speechGen;
+      clearAllTimers();
+      if (revealed) startAdvancePhase(); else startRevealPhase();
+    }
+  }
+}
+
+function toggleLoop() {
+  loopEnabled = !loopEnabled;
+  document.getElementById('loopTrack').classList.toggle('on', loopEnabled);
+  document.getElementById('loopValue').textContent = loopEnabled ? 'Continuous' : 'Once';
+  try { localStorage.setItem('espLoop', loopEnabled ? '1' : '0'); } catch(e) {}
+}
+
+function toggleMode() {
+  studyMode = studyMode === 'es-to-en' ? 'en-to-es' : 'es-to-en';
+  const isEnToEs = studyMode === 'en-to-es';
+  document.getElementById('modeTrack').classList.toggle('on', isEnToEs);
+  document.getElementById('modeValue').textContent = isEnToEs ? 'EN → ES' : 'ES → EN';
+  // Restart deck with new mode
+  clearAllTimers();
+  synth.cancel();
+  clearHistory();
+  index = 0;
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+  doneOverlay.classList.remove('show');
+  showCard(index);
+  startRevealPhase();
+}
+
+// ── Flag current card ──────────────────────────────────
+function flagCurrent() {
+  if (!words[index]) return;
+  const w   = words[index];
+  const sid = w._setId || getActiveSetId();
+  toggleFlag(sid, w);
+  updateFlagBtn();
+  buildSetGrid();
+  renderHistory();
+}
+
+function updateFlagBtn() {
+  if (!words[index]) { flagBtn.classList.remove('flagged'); return; }
+  const w   = words[index];
+  const sid = w._setId || getActiveSetId();
+  flagBtn.classList.toggle('flagged', isFlagged(sid, w));
+}
+
+// ── Easy word functions ────────────────────────────────
+function easyKey(word) { return word.es; }
+
+function isEasy(word) { return easyWords.has(easyKey(word)); }
+
+function markEasy() {
+  if (!words[index]) return;
+  const w = words[index];
+  easyWords.add(easyKey(w));
+  updateEasyBtn();
+  renderHistory();
+}
+
+function updateEasyBtn() {
+  if (!words[index]) { easyBtn.classList.remove('easy'); return; }
+  easyBtn.classList.toggle('easy', isEasy(words[index]));
+}
+
+// ── Init ───────────────────────────────────────────────
+function init() {
+  // Restore saved delay settings
+  try {
+    const savedReveal  = localStorage.getItem('espRevealDelay');
+    const savedAdvance = localStorage.getItem('espAdvanceDelay');
+    const savedLoop    = localStorage.getItem('espLoop');
+    if (savedReveal  !== null) { revealDelay  = parseFloat(savedReveal);  revealDisplay.textContent  = revealDelay.toFixed(1); }
+    if (savedAdvance !== null) { advanceDelay = parseFloat(savedAdvance); advanceDisplay.textContent = advanceDelay.toFixed(1); }
+    if (savedLoop    !== null) {
+      loopEnabled = savedLoop !== '0';
+      document.getElementById('loopTrack').classList.toggle('on', loopEnabled);
+      document.getElementById('loopValue').textContent = loopEnabled ? 'Continuous' : 'Once';
+    }
+    const savedSet = localStorage.getItem('espActiveSet');
+    if (savedSet) {
+      const idx = wordSets.findIndex(s => s.id === savedSet);
+      if (idx >= 0) {
+        activeSetIndex = idx;
+        words = wordSets[idx].id === HARD_ID ? getFlaggedWords() : wordSets[idx].words;
+        currentSetNameEl.textContent = wordSets[idx].label;
+      }
+    }
+  } catch(e) {}
+  checkAudioUnlock();
+  showCard(index);
+  if (isPlaying) startRevealPhase();
+}
+
+// ── Show card ──────────────────────────────────────────
+function showCard(i) {
+  const w = words[i];
+
+  // Instantly hide the answer element before changing text
+  // (prevents flash from CSS transition on previous revealed state)
+  englishWordEl.style.transition = 'none';
+  englishWordEl.style.opacity    = '0';
+  englishWordEl.style.transform  = 'translateY(8px)';
+  englishWordEl.classList.remove('revealed');
+  rightPronEl.style.display = 'none';
+  void englishWordEl.offsetWidth; // force reflow before re-enabling transition
+  englishWordEl.style.transition = '';
+  englishWordEl.style.opacity    = '';
+  englishWordEl.style.transform  = '';
+
+  if (studyMode === 'es-to-en') {
+    leftPanelLabel.textContent  = 'Español';
+    leftPanelLabel.style.color  = 'var(--terra)';
+    spanishWordEl.textContent   = w.es;
+    pronunciationEl.textContent = w.pron;
+    pronunciationEl.style.display = '';
+    spanishWordEl.classList.remove('answer-hidden');
+    pronunciationEl.classList.remove('answer-hidden');
+
+    rightPanelLabel.textContent = 'English';
+    rightPanelLabel.style.color = 'var(--sage)';
+    englishWordEl.textContent   = w.en;
+    englishHintEl.textContent   = 'waiting…';
+    englishHintEl.classList.remove('hidden-hint');
+  } else {
+    leftPanelLabel.textContent  = 'English';
+    leftPanelLabel.style.color  = 'var(--sage)';
+    spanishWordEl.textContent   = w.en;
+    pronunciationEl.style.display = 'none';
+    spanishWordEl.classList.remove('answer-hidden');
+
+    rightPanelLabel.textContent = 'Español';
+    rightPanelLabel.style.color = 'var(--terra)';
+    englishWordEl.textContent   = w.es;
+    rightPronEl.textContent     = w.pron;
+    englishHintEl.textContent   = 'waiting…';
+    englishHintEl.classList.remove('hidden-hint');
+  }
+
+  progressPill.querySelector('#pillCount').textContent = `${i + 1} of ${words.length}`;
+  progressPill.querySelector('#pillLeft').textContent  = `${words.length - i - 1} to go`;
+  progressFill.style.width = `${(i / words.length) * 100}%`;
+
+  resetRings();
+  cardEl.classList.remove('card-animate');
+  void cardEl.offsetWidth;
+  cardEl.classList.add('card-animate');
+  updateFlagBtn();
+  updateEasyBtn();
+}
+
+// ── Timer phases ───────────────────────────────────────
+function startRevealPhase() {
+  clearAllTimers();
+  resetRings();
+  const gen = ++speechGen;
+  setRingsSpeaking(true);
+  speakSpanishThen(words[index].es, gen, (g) => {
+    if (g !== speechGen || !isPlaying) return; // stale — ignore
+    setRingsSpeaking(false);
+    beginRevealCountdown(g);
+  });
+}
+
+function setRingsSpeaking() {}
+
+function beginRevealCountdown(gen) {
+  const delay = isMuted ? Math.max(revealDelay, 1.5) : revealDelay;
+  revealTimer = setTimeout(() => {
+    if (gen !== speechGen || !isPlaying) return;
+    revealAndThenAdvance(gen);
+  }, delay * 1000);
+}
+
+function revealAndThenAdvance(gen) {
+  if (studyMode === 'es-to-en') {
+    englishWordEl.classList.add('revealed');
+    englishHintEl.classList.add('hidden-hint');
+    speakAnswerThen(words[index].en, 'en', gen);
+  } else {
+    englishWordEl.classList.add('revealed');
+    rightPronEl.style.display = '';
+    englishHintEl.classList.add('hidden-hint');
+    speakAnswerThen(words[index].es, 'es', gen);
+  }
+}
+
+function speakAnswerThen(text, lang, gen) {
+  if (isMuted || !audioUnlocked || !synth) {
+    if (gen === speechGen && isPlaying) startAdvancePhase();
+    return;
+  }
+  synth.cancel();
+  const spokenText = text.replace(/\s*\/\s*/g, ', ');
+  const utt = new SpeechSynthesisUtterance(spokenText);
+  if (lang === 'es') {
+    utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
+    utt.rate  = 0.88;
+    if (spanishVoice) utt.voice = spanishVoice;
+  } else {
+    utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+    utt.rate  = 0.92;
+    if (englishVoice) utt.voice = englishVoice;
+  }
+  utt.pitch = 1.0;
+  utt.onend   = () => { if (gen === speechGen && isPlaying) startAdvancePhase(); };
+  utt.onerror = (e) => {
+    if (e.error !== 'interrupted' && e.error !== 'canceled') {
+      if (gen === speechGen && isPlaying) startAdvancePhase();
+    }
+  };
+  synth.speak(utt);
+}
+
+function startAdvancePhase() {
+  const delay = isMuted ? Math.max(advanceDelay, 2.0) : advanceDelay;
+  clearAnimFrame();
+  advanceTimer = setTimeout(() => {
+    nextCard();
+  }, delay * 1000);
+}
+
+// ── Ring animation (removed — no-ops kept for safety) ──
+function animateRing() {}
+function resetRings() {}
+function setRingsSpeaking() {}
+function clearAnimFrame() {
+  if (ringAnimId) { cancelAnimationFrame(ringAnimId); ringAnimId = null; }
+  ringStart = null;
+}
+
+function clearAllTimers() {
+  clearTimeout(revealTimer);
+  clearTimeout(advanceTimer);
+  clearAnimFrame();
+  setRingsSpeaking(false);
+}
+
+function clearAnimFrame() {
+  if (ringAnimId) { cancelAnimationFrame(ringAnimId); ringAnimId = null; }
+  ringStart = null;
+}
+
+// ── Navigation ─────────────────────────────────────────
+const MAX_HISTORY = 8;
+let recentWords = [];
+const historyWrap = document.getElementById('historyWrap');
+const historyList = document.getElementById('historyList');
+
+function addToHistory(wordObj) {
+  // Tag with current set ID so we can toggle mastery from history
+  const tagged = { ...wordObj, _setId: currentWordSetId(wordObj) };
+  recentWords.unshift(tagged);
+  if (recentWords.length > MAX_HISTORY) recentWords.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  if (recentWords.length === 0) {
+    historyWrap.classList.remove('has-items');
+    return;
+  }
+  historyWrap.classList.add('has-items');
+  historyList.innerHTML = '';
+  recentWords.forEach((w, i) => {
+    const sid     = w._setId || getActiveSetId();
+    const flagged = isFlagged(sid, w);
+    const easy    = isEasy(w);
+    const item    = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML =
+      `<span class="history-num">${i + 1}</span>` +
+      `<span class="history-es"${easy ? ' style="opacity:0.45;text-decoration:line-through"' : ''}>${w.es}</span>` +
+      `<span class="history-pron">${w.pron}</span>` +
+      `<span class="history-en"${easy ? ' style="opacity:0.45;text-decoration:line-through"' : ''}>${w.en}</span>` +
+      `<button class="history-easy${easy ? ' easy' : ''}" title="Mark as easy">✓</button>` +
+      `<button class="history-flag${flagged ? ' flagged' : ''}" title="Flag as hard">🚩</button>`;
+    item.querySelector('.history-easy').onclick = (e) => {
+      e.stopPropagation();
+      if (isEasy(w)) easyWords.delete(easyKey(w)); else easyWords.add(easyKey(w));
+      renderHistory();
+      updateEasyBtn();
+    };
+    item.querySelector('.history-flag').onclick = (e) => {
+      e.stopPropagation();
+      toggleFlag(sid, w);
+      renderHistory();
+      buildSetGrid();
+      if (wordSets[activeSetIndex].id === HARD_ID) words = getFlaggedWords();
+      updateFlagBtn();
+    };
+    historyList.appendChild(item);
+  });
+}
+
+function clearHistory() {
+  recentWords = [];
+  historyList.innerHTML = '';
+  historyWrap.classList.remove('has-items');
+}
+
+function nextCard() {
+  ++speechGen;
+  clearAllTimers();
+  synth.cancel();
+  addToHistory(words[index]);
+  index++;
+  // Skip easy words
+  while (index < words.length && isEasy(words[index])) index++;
+  if (index >= words.length) { showDone(); return; }
+  showCard(index);
+  updateFlagBtn();
+  if (isPlaying) startRevealPhase();
+}
+
+function skipCard() { nextCard(); }
+
+function restart() {
+  ++speechGen;
+  clearAllTimers();
+  synth.cancel();
+  clearHistory();
+  index = 0;
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+  doneOverlay.classList.remove('show');
+  showCard(index);
+  startRevealPhase();
+}
+
+function showDone() {
+  if (loopEnabled) {
+    announceRepeat(() => restart());
+    return;
+  }
+  resetRings();
+  progressFill.style.width = '100%';
+  document.querySelector('#doneOverlay h2').textContent = '¡Excelente!';
+  document.querySelector('#doneOverlay p').innerHTML =
+    `You finished all <span id="doneCount">${words.length}</span> words.<br>Keep practicing to build fluency!`;
+  doneOverlay.classList.add('show');
+}
+
+function announceRepeat(onDone) {
+  const setLabel = wordSets[activeSetIndex].label.replace(/^\S+\s*/, ''); // strip emoji
+  const msg = `Repeat practice on word set: ${setLabel}`;
+  if (isMuted || !audioUnlocked || !synth) { onDone(); return; }
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(msg);
+  utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+  if (englishVoice) utt.voice = englishVoice;
+  utt.rate  = 0.92;
+  utt.pitch = 1.0;
+  utt.onend   = () => onDone();
+  utt.onerror = () => onDone();
+  synth.speak(utt);
+}
+
+// ── Play / Pause ───────────────────────────────────────
+function togglePlay() {
+  isPlaying = !isPlaying;
+  playBtn.classList.remove('hover-paused');
+  cardEl.classList.remove('interaction-paused');
+  playBtn.textContent = isPlaying ? '⏸' : '▶';
+
+  if (isPlaying) {
+    // Resume: if english not shown, start reveal phase fresh
+    const revealed = englishWordEl.classList.contains('revealed');
+    if (!revealed) {
+      startRevealPhase();
+    } else {
+      startAdvancePhase();
+    }
+  } else {
+    clearAllTimers();
+    synth.cancel();
+  }
+}
+
+// ── Delay adjustment ───────────────────────────────────
+function adjustDelay(type, delta) {
+  if (type === 'reveal') {
+    revealDelay = Math.max(0.0, Math.min(10, revealDelay + delta));
+    revealDisplay.textContent = revealDelay.toFixed(1);
+    try { localStorage.setItem('espRevealDelay', revealDelay); } catch(e) {}
+  } else {
+    advanceDelay = Math.max(0.0, Math.min(10, advanceDelay + delta));
+    advanceDisplay.textContent = advanceDelay.toFixed(1);
+    try { localStorage.setItem('espAdvanceDelay', advanceDelay); } catch(e) {}
+  }
+
+  // Bump generation to discard any in-flight speech callbacks, then restart
+  if (isPlaying) {
+    ++speechGen;
+    synth.cancel();
+    const revealed = englishWordEl.classList.contains('revealed');
+    if (revealed) {
+      startAdvancePhase();
+    } else {
+      startRevealPhase();
+    }
+  }
+}
+
+// ── Interaction pause (touch / mouse) ─────────────────
+const stageEl = document.querySelector('.stage');
+
+function interactionPause() {
+  if (!isPlaying) return;
+  isPlaying = false;
+  playBtn.textContent = '▶';
+  playBtn.classList.add('hover-paused');
+  cardEl.classList.add('interaction-paused');
+  clearAllTimers();
+  synth.cancel();
+}
+
+// Touch: pause on press (not on buttons)
+stageEl.addEventListener('touchstart', (e) => {
+  if (e.target.closest('button')) return;
+  interactionPause();
+}, { passive: true });
+
+// Mouse: pause on first move over card
+stageEl.addEventListener('mousemove', () => {
+  interactionPause();
+});
+
+// ── Start ──────────────────────────────────────────────
+init();
+
+// ── Service Worker registration (offline PWA) ──────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(e => console.log('SW registration failed:', e));
+  });
+}
+</script>
+</body>
+</html>
