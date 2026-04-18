@@ -1051,7 +1051,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v34</span></h1>
+  <h1>Español <span>Flashcards · v35</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -1067,15 +1067,6 @@
 
 <div class="progress-bar-wrap">
   <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
-</div>
-
-<!-- Tap to Start overlay -->
-<div class="tap-start-overlay" id="tapStartOverlay">
-  <div class="tap-start-box">
-    <div class="tap-start-icon">🇪🇸</div>
-    <div class="tap-start-title">Español Flashcards</div>
-    <div class="tap-start-sub">Tap anywhere to begin</div>
-  </div>
 </div>
 
 <!-- Set picker modal -->
@@ -2070,16 +2061,24 @@ loadVoices();
 
 // iOS requires a user gesture before speech API works
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const tapStartOverlay = document.getElementById('tapStartOverlay');
+let tapStartOverlay = null;
 
 function checkAudioUnlock() {
   if (!isIOS) {
     audioUnlocked = true;
-    tapStartOverlay.style.display = 'none';
     return;
   }
-  // Show tap-to-start overlay — pause until tapped
+  // Dynamically create and show tap-to-start overlay
   isPlaying = false;
+  tapStartOverlay = document.createElement('div');
+  tapStartOverlay.className = 'tap-start-overlay';
+  tapStartOverlay.innerHTML =
+    '<div class="tap-start-box">' +
+      '<div class="tap-start-icon">🇪🇸</div>' +
+      '<div class="tap-start-title">Español Flashcards</div>' +
+      '<div class="tap-start-sub">Tap anywhere to begin</div>' +
+    '</div>';
+  document.body.appendChild(tapStartOverlay);
   tapStartOverlay.addEventListener('click', onTapStart, { once: true });
   tapStartOverlay.addEventListener('touchend', onTapStart, { once: true, passive: true });
 }
