@@ -1051,7 +1051,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v30</span></h1>
+  <h1>Español <span>Flashcards · v32</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2050,7 +2050,9 @@ function checkAudioUnlock() {
   tapStartOverlay.addEventListener('touchend', onTapStart, { once: true, passive: true });
 }
 
-function onTapStart() {
+function onTapStart(e) {
+  e.stopPropagation();
+  e.preventDefault();
   unlockAudio();
   tapStartOverlay.classList.add('hidden');
   setTimeout(() => tapStartOverlay.remove(), 500);
@@ -2074,54 +2076,54 @@ function unlockAudio() {
 }
 
 function speakSpanishThen(text, gen, onFinished) {
-  // Speak the question word, then call onFinished — but only if this
-  // generation is still current (guards against stale callbacks).
   if (isMuted || !audioUnlocked || !synth) { onFinished(gen); return; }
   synth.cancel();
-
   const isEsMode = studyMode === 'es-to-en';
   const spokenText = (isEsMode ? text : words[index].en).replace(/\s*\/\s*/g, ', ');
-  const utt = new SpeechSynthesisUtterance(spokenText);
-  if (isEsMode) {
-    utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
-    utt.rate  = 0.88;
-    if (spanishVoice) utt.voice = spanishVoice;
-  } else {
-    utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
-    utt.rate  = 0.92;
-    if (englishVoice) utt.voice = englishVoice;
-  }
-  utt.pitch = 1.0;
-  utt.onstart = () => speakBtn.classList.add('speaking');
-  utt.onend   = () => { speakBtn.classList.remove('speaking'); onFinished(gen); };
-  utt.onerror = (e) => {
-    speakBtn.classList.remove('speaking');
-    // 'interrupted' means we cancelled intentionally — don't fire callback
-    if (e.error !== 'interrupted' && e.error !== 'canceled') onFinished(gen);
-  };
-  synth.speak(utt);
+  setTimeout(() => {
+    if (gen !== speechGen || !isPlaying) return;
+    const utt = new SpeechSynthesisUtterance(spokenText);
+    if (isEsMode) {
+      utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
+      utt.rate  = 0.8;
+      if (spanishVoice) utt.voice = spanishVoice;
+    } else {
+      utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+      utt.rate  = 0.85;
+      if (englishVoice) utt.voice = englishVoice;
+    }
+    utt.pitch = 1.0;
+    utt.onstart = () => speakBtn.classList.add('speaking');
+    utt.onend   = () => { speakBtn.classList.remove('speaking'); onFinished(gen); };
+    utt.onerror = (e) => {
+      speakBtn.classList.remove('speaking');
+      if (e.error !== 'interrupted' && e.error !== 'canceled') onFinished(gen);
+    };
+    synth.speak(utt);
+  }, 80);
 }
 
 function speakWord(text, lang = 'es') {
-  // Standalone playback (replay button, English reveal) — no callback.
   if (isMuted || !audioUnlocked || !synth) return;
   synth.cancel();
   const spokenText = text.replace(/\s*\/\s*/g, ', ');
-  const utt = new SpeechSynthesisUtterance(spokenText);
-  if (lang === 'es') {
-    utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
-    utt.rate  = 0.88;
-    if (spanishVoice) utt.voice = spanishVoice;
-  } else {
-    utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
-    utt.rate  = 0.92;
-    if (englishVoice) utt.voice = englishVoice;
-  }
-  utt.pitch = 1.0;
-  utt.onstart = () => { if (lang === 'es') speakBtn.classList.add('speaking'); };
-  utt.onend   = () => speakBtn.classList.remove('speaking');
-  utt.onerror = () => speakBtn.classList.remove('speaking');
-  synth.speak(utt);
+  setTimeout(() => {
+    const utt = new SpeechSynthesisUtterance(spokenText);
+    if (lang === 'es') {
+      utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
+      utt.rate  = 0.8;
+      if (spanishVoice) utt.voice = spanishVoice;
+    } else {
+      utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+      utt.rate  = 0.85;
+      if (englishVoice) utt.voice = englishVoice;
+    }
+    utt.pitch = 1.0;
+    utt.onstart = () => { if (lang === 'es') speakBtn.classList.add('speaking'); };
+    utt.onend   = () => speakBtn.classList.remove('speaking');
+    utt.onerror = () => speakBtn.classList.remove('speaking');
+    synth.speak(utt);
+  }, 80);
 }
 
 function speakCurrent() {
@@ -2352,24 +2354,27 @@ function speakAnswerThen(text, lang, gen) {
   }
   synth.cancel();
   const spokenText = text.replace(/\s*\/\s*/g, ', ');
-  const utt = new SpeechSynthesisUtterance(spokenText);
-  if (lang === 'es') {
-    utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
-    utt.rate  = 0.88;
-    if (spanishVoice) utt.voice = spanishVoice;
-  } else {
-    utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
-    utt.rate  = 0.92;
-    if (englishVoice) utt.voice = englishVoice;
-  }
-  utt.pitch = 1.0;
-  utt.onend   = () => { if (gen === speechGen && isPlaying) startAdvancePhase(); };
-  utt.onerror = (e) => {
-    if (e.error !== 'interrupted' && e.error !== 'canceled') {
-      if (gen === speechGen && isPlaying) startAdvancePhase();
+  setTimeout(() => {
+    if (gen !== speechGen || !isPlaying) return;
+    const utt = new SpeechSynthesisUtterance(spokenText);
+    if (lang === 'es') {
+      utt.lang  = spanishVoice ? spanishVoice.lang : 'es-ES';
+      utt.rate  = 0.8;
+      if (spanishVoice) utt.voice = spanishVoice;
+    } else {
+      utt.lang  = englishVoice ? englishVoice.lang : 'en-US';
+      utt.rate  = 0.85;
+      if (englishVoice) utt.voice = englishVoice;
     }
-  };
-  synth.speak(utt);
+    utt.pitch = 1.0;
+    utt.onend   = () => { if (gen === speechGen && isPlaying) startAdvancePhase(); };
+    utt.onerror = (e) => {
+      if (e.error !== 'interrupted' && e.error !== 'canceled') {
+        if (gen === speechGen && isPlaying) startAdvancePhase();
+      }
+    };
+    synth.speak(utt);
+  }, 80);
 }
 
 function startAdvancePhase() {
