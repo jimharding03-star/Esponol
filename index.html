@@ -472,47 +472,7 @@
     box-shadow: 0 4px 16px rgba(193,68,14,0.3);
   }
 
-  /* ── Tap to Start overlay ───────────────────────── */
-  .tap-start-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--terra);
-    background-image: linear-gradient(135deg, #c1440e 0%, #7a2a08 100%);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  .tap-start-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    text-align: center;
-    padding: 40px;
-  }
-  .tap-start-icon { font-size: 5rem; line-height: 1; }
-  .tap-start-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.02em;
-  }
-  .tap-start-sub {
-    font-family: 'Lato', sans-serif;
-    font-size: 1rem;
-    font-weight: 300;
-    color: rgba(255,255,255,0.8);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.6; }
-    50%       { opacity: 1; }
-  }
+
   @keyframes cardIn {
     from { opacity: 0; transform: translateX(18px); }
     to   { opacity: 1; transform: translateX(0); }
@@ -1046,7 +1006,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v40</span></h1>
+  <h1>Español <span>Flashcards · v41</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2059,30 +2019,15 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 let tapStartOverlay = null;
 
 function checkAudioUnlock() {
-  // Always show overlay — works on iOS and desktop alike
-  isPlaying = false;
-  tapStartOverlay = document.createElement('div');
-  tapStartOverlay.className = 'tap-start-overlay';
-  tapStartOverlay.innerHTML =
-    '<div class="tap-start-box">' +
-      '<div class="tap-start-icon">🇪🇸</div>' +
-      '<div class="tap-start-title">Español Flashcards</div>' +
-      '<button id="tapStartBtn" style="margin-top:20px;padding:16px 40px;font-size:1.1rem;font-family:Lato,sans-serif;font-weight:700;letter-spacing:0.08em;background:#fff;color:#C1440E;border:none;border-radius:999px;cursor:pointer;">▶ Begin</button>' +
-    '</div>';
-  document.body.appendChild(tapStartOverlay);
-  document.getElementById('tapStartBtn').addEventListener('click', onTapStart);
+  if (!isIOS) {
+    audioUnlocked = true;
+    return;
+  }
+  // On iOS show the gold banner — user taps it to unlock
+  audioBanner.classList.add('show');
 }
 
-function onTapStart(e) {
-  if (tapStartOverlay) {
-    tapStartOverlay.remove();
-    tapStartOverlay = null;
-  }
-  unlockAudio();
-  isPlaying = true;
-  playBtn.textContent = '⏸';
-  startRevealPhase();
-}
+function onTapStart(e) {}
 
 function autoUnlockOnce() {
   if (audioUnlocked) return;
