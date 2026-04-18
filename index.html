@@ -1046,7 +1046,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v39</span></h1>
+  <h1>Español <span>Flashcards · v40</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2067,12 +2067,10 @@ function checkAudioUnlock() {
     '<div class="tap-start-box">' +
       '<div class="tap-start-icon">🇪🇸</div>' +
       '<div class="tap-start-title">Español Flashcards</div>' +
-      '<div class="tap-start-sub">Click or tap anywhere to begin</div>' +
+      '<button id="tapStartBtn" style="margin-top:20px;padding:16px 40px;font-size:1.1rem;font-family:Lato,sans-serif;font-weight:700;letter-spacing:0.08em;background:#fff;color:#C1440E;border:none;border-radius:999px;cursor:pointer;">▶ Begin</button>' +
     '</div>';
   document.body.appendChild(tapStartOverlay);
-  // Use document-level listeners to guarantee firing regardless of target
-  document.addEventListener('click', onTapStart, { once: true });
-  document.addEventListener('touchend', onTapStart, { once: true, passive: true });
+  document.getElementById('tapStartBtn').addEventListener('click', onTapStart);
 }
 
 function onTapStart(e) {
