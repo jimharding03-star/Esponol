@@ -483,11 +483,6 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: opacity 0.5s ease;
-  }
-  .tap-start-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
   }
   .tap-start-box {
     display: flex;
@@ -1051,7 +1046,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v37</span></h1>
+  <h1>Español <span>Flashcards · v38</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2083,9 +2078,8 @@ function onTapStart(e) {
   e.stopPropagation();
   e.preventDefault();
   unlockAudio();
-  tapStartOverlay.style.pointerEvents = 'none';
-  tapStartOverlay.classList.add('hidden');
-  setTimeout(() => { if (tapStartOverlay) tapStartOverlay.remove(); }, 600);
+  tapStartOverlay.remove();
+  tapStartOverlay = null;
   isPlaying = true;
   playBtn.textContent = '⏸';
   startRevealPhase();
