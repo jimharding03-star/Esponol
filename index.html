@@ -174,7 +174,7 @@
 
   .english-word {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 5.5vw, 2.3rem);
+    font-size: clamp(2rem, 7vw, 3rem);
     font-weight: 700;
     font-style: italic;
     color: #1a2e10;
@@ -955,6 +955,12 @@
     font-size: 0.75rem; color: transparent; flex-shrink: 0; transition: all 0.18s;
   }
   .word-row.flagged .word-row-check { border-color: var(--terra); background: var(--terra); color: #fff; }
+  .word-row-easy-badge {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--sage); border: 1.5px solid var(--sage); border-radius: 999px;
+    padding: 2px 7px; flex-shrink: 0; opacity: 0;
+  }
+  .word-row.easy .word-row-easy-badge { opacity: 1; }
   .word-row-text { flex: 1; min-width: 0; }
   .word-row-es { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--bark); }
   .word-row-sub { font-size: 0.68rem; color: #aaa; margin-top: 1px; }
@@ -1000,7 +1006,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v22</span></h1>
+  <h1>Español <span>Flashcards · v27</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -1844,14 +1850,16 @@ function renderWordListRows() {
   list.forEach((w) => {
     const sid     = w._setId || set.id;
     const flagged = isFlagged(sid, w);
+    const easy    = isEasy(w);
     const row     = document.createElement('div');
-    row.className = 'word-row' + (flagged ? ' flagged' : '');
+    row.className = 'word-row' + (flagged ? ' flagged' : '') + (easy ? ' easy' : '');
     row.innerHTML =
       `<div class="word-row-check">🚩</div>` +
       `<div class="word-row-text">` +
         `<div class="word-row-es">${w.es}</div>` +
         `<div class="word-row-sub">${w.pron}</div>` +
       `</div>` +
+      `<div class="word-row-easy-badge">Easy</div>` +
       `<div class="word-row-en">${w.en}</div>`;
     row.onclick = () => {
       toggleFlag(sid, w);
@@ -1960,21 +1968,26 @@ loadVoices();
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
 function checkAudioUnlock() {
-  if (isIOS && !audioUnlocked) {
-    audioBanner.classList.add('show');
-  } else {
-    audioUnlocked = true;
+  if (!isIOS) { audioUnlocked = true; return; }
+  if (!isMuted) {
+    // Sound is ON — auto-unlock on first user interaction with anything
+    document.addEventListener('touchstart', autoUnlockOnce, { once: true, passive: true });
+    document.addEventListener('mousedown', autoUnlockOnce, { once: true });
   }
 }
 
+function autoUnlockOnce() {
+  if (audioUnlocked) return;
+  unlockAudio();
+}
+
 function unlockAudio() {
+  if (audioUnlocked) return;
   const u = new SpeechSynthesisUtterance('');
   u.volume = 0;
   synth.speak(u);
   audioUnlocked = true;
   audioBanner.classList.remove('show');
-  // Re-trigger the reveal phase now that audio is unlocked
-  startRevealPhase();
 }
 
 function speakSpanishThen(text, gen, onFinished) {
@@ -2029,7 +2042,7 @@ function speakWord(text, lang = 'es') {
 }
 
 function speakCurrent() {
-  if (!audioUnlocked && isIOS) { unlockAudio(); return; }
+  if (!audioUnlocked) { unlockAudio(); }
   if (studyMode === 'es-to-en') {
     speakWord(words[index].es, 'es');
   } else {
@@ -2043,7 +2056,15 @@ function toggleMute() {
   muteBtn.classList.toggle('muted', isMuted);
   if (isMuted) {
     synth.cancel();
-    // Restart current phase with muted minimums applied
+    if (isPlaying) {
+      const revealed = englishWordEl.classList.contains('revealed');
+      ++speechGen;
+      clearAllTimers();
+      if (revealed) startAdvancePhase(); else startRevealPhase();
+    }
+  } else {
+    // Turning sound ON — unlock audio immediately
+    unlockAudio();
     if (isPlaying) {
       const revealed = englishWordEl.classList.contains('revealed');
       ++speechGen;
@@ -2187,9 +2208,14 @@ function showCard(i) {
     englishHintEl.classList.remove('hidden-hint');
   }
 
-  progressPill.querySelector('#pillCount').textContent = `${i + 1} of ${words.length}`;
-  progressPill.querySelector('#pillLeft').textContent  = `${words.length - i - 1} to go`;
-  progressFill.style.width = `${(i / words.length) * 100}%`;
+  const activeWords  = words.filter(w => !isEasy(w));
+  const activeTotal  = activeWords.length;
+  const activeBefore = words.slice(0, i).filter(w => !isEasy(w)).length;
+  const activePos    = activeBefore + 1;
+  const activeLeft   = activeTotal - activePos;
+  progressPill.querySelector('#pillCount').textContent = `${activePos} of ${activeTotal}`;
+  progressPill.querySelector('#pillLeft').textContent  = `${activeLeft} to go`;
+  progressFill.style.width = `${(activeBefore / activeTotal) * 100}%`;
 
   resetRings();
   cardEl.classList.remove('card-animate');
@@ -2371,9 +2397,12 @@ function restart() {
   synth.cancel();
   clearHistory();
   index = 0;
+  // Skip easy words from the beginning
+  while (index < words.length && isEasy(words[index])) index++;
   isPlaying = true;
   playBtn.textContent = '⏸';
   doneOverlay.classList.remove('show');
+  if (index >= words.length) { showDone(); return; }
   showCard(index);
   startRevealPhase();
 }
