@@ -1051,7 +1051,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v32</span></h1>
+  <h1>Español <span>Flashcards · v33</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2043,7 +2043,11 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const tapStartOverlay = document.getElementById('tapStartOverlay');
 
 function checkAudioUnlock() {
-  if (!isIOS) { audioUnlocked = true; return; }
+  if (!isIOS) {
+    audioUnlocked = true;
+    tapStartOverlay.style.display = 'none';
+    return;
+  }
   // Show tap-to-start overlay — pause until tapped
   isPlaying = false;
   tapStartOverlay.addEventListener('click', onTapStart, { once: true });
