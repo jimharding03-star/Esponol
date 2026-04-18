@@ -472,7 +472,52 @@
     box-shadow: 0 4px 16px rgba(193,68,14,0.3);
   }
 
-  /* ── Card flip animation ────────────────────────── */
+  /* ── Tap to Start overlay ───────────────────────── */
+  .tap-start-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--terra);
+    background-image: linear-gradient(135deg, #c1440e 0%, #7a2a08 100%);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.5s ease;
+  }
+  .tap-start-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tap-start-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    padding: 40px;
+  }
+  .tap-start-icon { font-size: 5rem; line-height: 1; }
+  .tap-start-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+  .tap-start-sub {
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
+  }
   @keyframes cardIn {
     from { opacity: 0; transform: translateX(18px); }
     to   { opacity: 1; transform: translateX(0); }
@@ -1006,7 +1051,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v28</span></h1>
+  <h1>Español <span>Flashcards · v29</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -1022,6 +1067,15 @@
 
 <div class="progress-bar-wrap">
   <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- Tap to Start overlay -->
+<div class="tap-start-overlay" id="tapStartOverlay">
+  <div class="tap-start-box">
+    <div class="tap-start-icon">🇪🇸</div>
+    <div class="tap-start-title">Español Flashcards</div>
+    <div class="tap-start-sub">Tap anywhere to begin</div>
+  </div>
 </div>
 
 <!-- Set picker modal -->
@@ -1964,14 +2018,23 @@ loadVoices();
 
 // iOS requires a user gesture before speech API works
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const tapStartOverlay = document.getElementById('tapStartOverlay');
 
 function checkAudioUnlock() {
   if (!isIOS) { audioUnlocked = true; return; }
-  if (!isMuted) {
-    // Sound is ON — auto-unlock on first user interaction with anything
-    document.addEventListener('touchstart', autoUnlockOnce, { once: true, passive: true });
-    document.addEventListener('mousedown', autoUnlockOnce, { once: true });
-  }
+  // Show tap-to-start overlay — pause until tapped
+  isPlaying = false;
+  tapStartOverlay.addEventListener('click', onTapStart, { once: true });
+  tapStartOverlay.addEventListener('touchend', onTapStart, { once: true, passive: true });
+}
+
+function onTapStart() {
+  unlockAudio();
+  tapStartOverlay.classList.add('hidden');
+  setTimeout(() => tapStartOverlay.remove(), 500);
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+  startRevealPhase();
 }
 
 function autoUnlockOnce() {
@@ -2158,6 +2221,7 @@ function init() {
   } catch(e) {}
   checkAudioUnlock();
   showCard(index);
+  // Only autostart if audio is already unlocked (non-iOS or desktop)
   if (isPlaying) startRevealPhase();
 }
 
