@@ -1051,7 +1051,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v35</span></h1>
+  <h1>Español <span>Flashcards · v36</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2064,11 +2064,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 let tapStartOverlay = null;
 
 function checkAudioUnlock() {
-  if (!isIOS) {
-    audioUnlocked = true;
-    return;
-  }
-  // Dynamically create and show tap-to-start overlay
+  // Always show overlay — works on iOS and desktop alike
   isPlaying = false;
   tapStartOverlay = document.createElement('div');
   tapStartOverlay.className = 'tap-start-overlay';
