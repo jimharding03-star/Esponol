@@ -1051,7 +1051,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v33</span></h1>
+  <h1>Español <span>Flashcards · v34</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -1546,7 +1546,37 @@ const wordSets = [
     ]
   },
   {
-    id: 'shopping',
+    id: 'directions',
+    label: '🗺 Asking Directions',
+    words: [
+      { es: "¿Dónde está...?",          pron: "DOHN-deh ehs-TAH",              en: "Where is...?" },
+      { es: "¿Cómo llego a...?",        pron: "KOH-moh YEH-goh ah",           en: "How do I get to...?" },
+      { es: "¿Está lejos?",             pron: "ehs-TAH LEH-hohs",              en: "Is it far?" },
+      { es: "¿Está cerca?",             pron: "ehs-TAH SEHR-kah",              en: "Is it nearby?" },
+      { es: "a la derecha",             pron: "ah lah deh-REH-chah",           en: "to the right" },
+      { es: "a la izquierda",           pron: "ah lah ees-kee-EHR-dah",        en: "to the left" },
+      { es: "siga derecho",             pron: "SEE-gah deh-REH-choh",          en: "go straight" },
+      { es: "doble aquí",               pron: "DOH-bleh ah-KEE",               en: "turn here" },
+      { es: "en la esquina",            pron: "ehn lah ehs-KEE-nah",           en: "on the corner" },
+      { es: "cruce la calle",           pron: "KROO-seh lah KAH-yeh",          en: "cross the street" },
+      { es: "al final de la calle",     pron: "ahl fee-NAHL deh lah KAH-yeh",  en: "at the end of the street" },
+      { es: "a dos cuadras",            pron: "ah dohs KWAH-drahs",            en: "two blocks away" },
+      { es: "enfrente de",              pron: "ehn-FREHN-teh deh",             en: "in front of" },
+      { es: "detrás de",                pron: "deh-TRAHS deh",                 en: "behind" },
+      { es: "al lado de",               pron: "ahl LAH-doh deh",               en: "next to" },
+      { es: "entre",                    pron: "EHN-treh",                      en: "between" },
+      { es: "el semáforo",              pron: "ehl seh-MAH-foh-roh",           en: "the traffic light" },
+      { es: "la parada de autobús",     pron: "lah pah-RAH-dah deh ow-toh-BOOS", en: "the bus stop" },
+      { es: "la estación de metro",     pron: "lah ehs-tah-see-OHN deh MEH-troh", en: "the subway station" },
+      { es: "el estacionamiento",       pron: "ehl ehs-tah-see-oh-nah-mee-EHN-toh", en: "the parking lot" },
+      { es: "¿Puede repetir, por favor?", pron: "PWEH-deh reh-peh-TEER por fah-VOR", en: "Can you repeat, please?" },
+      { es: "No entiendo",              pron: "noh ehn-tee-EHN-doh",           en: "I don't understand" },
+      { es: "Estoy perdido",            pron: "ehs-TOY pehr-DEE-doh",          en: "I'm lost" },
+      { es: "¿Hay un mapa?",            pron: "eye oon MAH-pah",               en: "Is there a map?" },
+      { es: "a pie",                    pron: "ah pee-EH",                     en: "on foot" },
+      { es: "en coche",                 pron: "ehn KOH-cheh",                  en: "by car" },
+    ]
+  },
     label: '🛍 Shopping',
     words: [
       { es: "¿cuánto cuesta?", pron: "KWAHN-toh KWEHS-tah",  en: "how much does it cost?" },
