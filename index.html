@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v45</span></h1>
+  <h1>Español <span>Flashcards · v46</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2229,17 +2229,29 @@ async function askClaude(word) {
         messages: [{ role: 'user', content: prompt }]
       })
     });
-    const data = await res.json();
-    const text = data.content?.map(b => b.text || '').join('') || 'No response received.';
-    lastAiText = text;
-    // Render with basic markdown — bold and line breaks
-    aiResponse.innerHTML = text
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n/g, '<br>');
-    aiSaveHintBtn.style.display = '';
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); } catch(e) {
+      aiResponse.innerHTML = `<em style="color:var(--terra)">Worker returned: ${raw.substring(0,200)}</em>`;
+      return;
+    }
+    if (data.error) {
+      aiResponse.innerHTML = `<em style="color:var(--terra)">Error: ${data.error}</em>`;
+      return;
+    }
+    if (data.content) {
+      const text = data.content.map(b => b.text || '').join('');
+      lastAiText = text;
+      aiResponse.innerHTML = text
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+      aiSaveHintBtn.style.display = '';
+    } else {
+      aiResponse.innerHTML = `<em style="color:var(--terra)">Unexpected response: ${JSON.stringify(data).substring(0,200)}</em>`;
+    }
   } catch(e) {
-    aiResponse.innerHTML = '<em style="color:var(--terra)">Error contacting AI. Check your connection and try again.</em>';
+    aiResponse.innerHTML = `<em style="color:var(--terra)">Fetch error: ${e.message}</em>`;
   }
 }
 
