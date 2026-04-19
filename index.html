@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v51</span></h1>
+  <h1>Español <span>Flashcards · v52</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2214,11 +2214,12 @@ function saveAiAsHint() {
 async function askClaude(word) {
   const prompt =
     `I'm learning Spanish and I'm having trouble remembering this word:\n\n` +
-    `Spanish: "${word.es}"\nEnglish: "${word.en}"\nPronunciation: "${word.pron}"\n\n` +
+    `Spanish: "${word.es}"\nEnglish: "${word.en}"\nPronunciation guide: "${word.pron}"\n\n` +
     `Please help me with:\n` +
     `1. A vivid, memorable mnemonic to help the word stick\n` +
     `2. A brief expanded definition or cultural context\n` +
-    `3. One or two short example sentences\n\n` +
+    `3. Pronunciation tips — what to watch out for, how to position mouth/tongue, common mistakes\n` +
+    `4. One or two short example sentences\n\n` +
     `Keep it concise and friendly. I'm a beginner.`;
 
   try {
