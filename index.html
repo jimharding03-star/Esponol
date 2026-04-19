@@ -1063,7 +1063,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v55</span></h1>
+  <h1>Español <span>Flashcards · v56</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2314,6 +2314,12 @@ function unlockAudio() {
   synth.speak(u);
   audioUnlocked = true;
   audioBanner.classList.remove('show');
+  // Restart current card so speech now drives the timing
+  if (isPlaying) {
+    ++speechGen;
+    clearAllTimers();
+    startRevealPhase();
+  }
 }
 
 function speakSpanishThen(text, gen, onFinished) {
@@ -2572,7 +2578,7 @@ function startRevealPhase() {
 function setRingsSpeaking() {}
 
 function beginRevealCountdown(gen) {
-  const delay = isMuted ? Math.max(revealDelay, 1.5) : revealDelay;
+  const delay = (!audioUnlocked || isMuted) ? Math.max(revealDelay, 1.5) : revealDelay;
   revealTimer = setTimeout(() => {
     if (gen !== speechGen || !isPlaying) return;
     revealAndThenAdvance(gen);
@@ -2623,7 +2629,7 @@ function speakAnswerThen(text, lang, gen) {
 }
 
 function startAdvancePhase() {
-  const delay = isMuted ? Math.max(advanceDelay, 2.0) : advanceDelay;
+  const delay = (!audioUnlocked || isMuted) ? Math.max(advanceDelay, 2.0) : advanceDelay;
   clearAnimFrame();
   advanceTimer = setTimeout(() => {
     nextCard();
