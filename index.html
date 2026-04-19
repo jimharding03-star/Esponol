@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v48</span></h1>
+  <h1>Español <span>Flashcards · v49</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2458,14 +2458,13 @@ function updateEasyBtn() {
 
 // ── Init ───────────────────────────────────────────────
 function init() {
-  // Restore saved delay settings
+  // Always use 0.0 defaults — clear any previously saved delay values
   try {
-    const savedReveal  = localStorage.getItem('espRevealDelay');
-    const savedAdvance = localStorage.getItem('espAdvanceDelay');
+    localStorage.removeItem('espRevealDelay');
+    localStorage.removeItem('espAdvanceDelay');
+    revealDisplay.textContent  = revealDelay.toFixed(1);
+    advanceDisplay.textContent = advanceDelay.toFixed(1);
     const savedLoop    = localStorage.getItem('espLoop');
-    if (savedReveal  !== null) { revealDelay  = parseFloat(savedReveal);  revealDisplay.textContent  = revealDelay.toFixed(1); }
-    if (savedAdvance !== null) { advanceDelay = parseFloat(savedAdvance); advanceDisplay.textContent = advanceDelay.toFixed(1); }
-    if (savedLoop    !== null) {
       loopEnabled = savedLoop !== '0';
       document.getElementById('loopTrack').classList.toggle('on', loopEnabled);
       document.getElementById('loopValue').textContent = loopEnabled ? 'Continuous' : 'Once';
