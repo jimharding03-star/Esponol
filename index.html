@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v44</span></h1>
+  <h1>Español <span>Flashcards · v45</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2222,12 +2222,10 @@ async function askClaude(word) {
     `Keep it concise and friendly. I'm a beginner.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://espanol-ai.jimharding03.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
