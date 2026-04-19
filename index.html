@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v47</span></h1>
+  <h1>Español <span>Flashcards · v48</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2045,8 +2045,8 @@ function showNoWords() {
 
 // ── State ──────────────────────────────────────────────
 let index        = 0;
-let revealDelay  = 1.5;
-let advanceDelay = 2.0;
+let revealDelay  = 0.0;
+let advanceDelay = 0.0;
 let isPlaying    = true;
 let isMuted      = false;
 let audioUnlocked= false;
@@ -2749,7 +2749,7 @@ function showDone() {
 
 function announceRepeat(onDone) {
   const setLabel = wordSets[activeSetIndex].label.replace(/^\S+\s*/, ''); // strip emoji
-  const msg = `Repeat practice on word set: ${setLabel}`;
+  const msg = `Repeat Word Set: ${setLabel}`;
   if (isMuted || !audioUnlocked || !synth) { onDone(); return; }
   synth.cancel();
   const utt = new SpeechSynthesisUtterance(msg);
