@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v46</span></h1>
+  <h1>Español <span>Flashcards · v47</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2236,7 +2236,7 @@ async function askClaude(word) {
       return;
     }
     if (data.error) {
-      aiResponse.innerHTML = `<em style="color:var(--terra)">Error: ${data.error}</em>`;
+      aiResponse.innerHTML = `<em style="color:var(--terra)">Error: ${JSON.stringify(data.error)}</em>`;
       return;
     }
     if (data.content) {
