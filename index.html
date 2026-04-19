@@ -1012,6 +1012,18 @@
   .hint-btn:active { transform: scale(0.91); }
   .hint-btn.has-hint { background: var(--gold); border-color: var(--gold); }
 
+  /* ── AI button ───────────────────────────────────── */
+  .ai-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--mist); background: #fff; color: var(--bark);
+    font-size: 1.05rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s;
+    user-select: none;
+  }
+  .ai-btn:active { transform: scale(0.91); }
+  .ai-btn.offline { opacity: 0.35; cursor: not-allowed; }
+
   /* ── Hint display on card ────────────────────────── */
   .hint-display {
     font-family: 'Lato', sans-serif;
@@ -1045,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v43</span></h1>
+  <h1>Español <span>Flashcards · v44</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -1161,6 +1173,7 @@
   <button class="flag-btn"   id="flagBtn" onclick="flagCurrent()" title="Flag as hard">🚩</button>
   <button class="easy-btn"   id="easyBtn" onclick="markEasy()" title="Mark as easy">✓</button>
   <button class="hint-btn"   id="hintBtn" onclick="openHintModal()" title="Memory hint">💡</button>
+  <button class="ai-btn"     id="aiBtn"   onclick="openAiModal()" title="Ask AI">🤖</button>
 </div>
 
 <!-- Hint modal -->
@@ -1182,6 +1195,26 @@
         placeholder="Type your memory trick here… e.g. 'caballo sounds like ca-BYE-oh — a horse waving goodbye'"
         style="width:100%;min-height:120px;font-family:'Lato',sans-serif;font-size:0.95rem;padding:12px;border:1.5px solid var(--mist);border-radius:12px;resize:vertical;color:var(--bark);background:var(--cream);line-height:1.5"></textarea>
       <button onclick="saveHint()" style="margin-top:12px;width:100%;padding:13px;background:linear-gradient(135deg,var(--terra),var(--clay));color:#fff;border:none;border-radius:999px;font-family:'Lato',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:0.06em;cursor:pointer">Save Hint</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI modal -->
+<div class="hint-modal-overlay" id="aiModalOverlay" onclick="handleAiOverlayClick(event)">
+  <div class="hint-modal-sheet" id="aiModalSheet">
+    <div class="sheet-handle"></div>
+    <div class="wl-header">
+      <div class="wl-title-block">
+        <div class="wl-title">🤖 AI Help</div>
+        <div class="wl-subtitle" id="aiModalWord"></div>
+      </div>
+      <div class="wl-actions">
+        <button class="wl-btn" id="aiSaveHintBtn" onclick="saveAiAsHint()" style="display:none">💡 Save as Hint</button>
+        <button class="wl-btn" onclick="closeAiModal()">✕ Close</button>
+      </div>
+    </div>
+    <div style="padding:16px 20px 32px">
+      <div id="aiResponse" style="font-family:'Lato',sans-serif;font-size:0.92rem;line-height:1.6;color:var(--bark);min-height:80px"></div>
     </div>
   </div>
 </div>
@@ -2124,6 +2157,93 @@ function clearHint() {
 }
 
 loadHints();
+
+// ── AI system ──────────────────────────────────────────
+const aiBtn           = document.getElementById('aiBtn');
+const aiModalOverlay  = document.getElementById('aiModalOverlay');
+const aiModalWord     = document.getElementById('aiModalWord');
+const aiResponse      = document.getElementById('aiResponse');
+const aiSaveHintBtn   = document.getElementById('aiSaveHintBtn');
+let lastAiText        = '';
+
+function updateAiBtn() {
+  aiBtn.classList.toggle('offline', !navigator.onLine);
+  aiBtn.title = navigator.onLine ? 'Ask AI' : 'Offline — AI unavailable';
+}
+
+window.addEventListener('online',  updateAiBtn);
+window.addEventListener('offline', updateAiBtn);
+updateAiBtn();
+
+function openAiModal() {
+  if (!navigator.onLine) {
+    aiBtn.title = 'No internet connection';
+    return;
+  }
+  if (!words[index]) return;
+  const w = words[index];
+  aiModalWord.textContent = `${w.es} — ${w.en}`;
+  aiResponse.innerHTML = '<em style="color:#aaa">Asking Claude…</em>';
+  aiSaveHintBtn.style.display = 'none';
+  lastAiText = '';
+  aiModalOverlay.classList.add('open');
+  if (isPlaying) { clearAllTimers(); synth.cancel(); }
+  askClaude(w);
+}
+
+function closeAiModal() {
+  aiModalOverlay.classList.remove('open');
+  if (isPlaying) {
+    const revealed = englishWordEl.classList.contains('revealed');
+    if (revealed) startAdvancePhase(); else startRevealPhase();
+  }
+}
+
+function handleAiOverlayClick(e) {
+  if (e.target === aiModalOverlay) closeAiModal();
+}
+
+function saveAiAsHint() {
+  if (!words[index] || !lastAiText) return;
+  hints[hintKey(words[index])] = lastAiText;
+  saveHints();
+  updateHintDisplay();
+  closeAiModal();
+}
+
+async function askClaude(word) {
+  const prompt =
+    `I'm learning Spanish and I'm having trouble remembering this word:\n\n` +
+    `Spanish: "${word.es}"\nEnglish: "${word.en}"\nPronunciation: "${word.pron}"\n\n` +
+    `Please help me with:\n` +
+    `1. A vivid, memorable mnemonic to help the word stick\n` +
+    `2. A brief expanded definition or cultural context\n` +
+    `3. One or two short example sentences\n\n` +
+    `Keep it concise and friendly. I'm a beginner.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || 'No response received.';
+    lastAiText = text;
+    // Render with basic markdown — bold and line breaks
+    aiResponse.innerHTML = text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    aiSaveHintBtn.style.display = '';
+  } catch(e) {
+    aiResponse.innerHTML = '<em style="color:var(--terra)">Error contacting AI. Check your connection and try again.</em>';
+  }
+}
 
 // ── Speech setup ───────────────────────────────────────
 const synth = window.speechSynthesis;
