@@ -479,6 +479,8 @@
   }
   .card-animate { animation: cardIn 0.35s ease both; }
   .card.interaction-paused { box-shadow: 0 0 0 3px var(--terra), 0 6px 32px var(--shadow); transition: box-shadow 0.15s ease; }
+  .card.interaction-paused .card-body { background: rgba(62,32,16,0.06); transition: background 0.15s ease; }
+  .card.interaction-paused .panel-english { background: linear-gradient(135deg, #dce8d4 0%, #c8dabb 100%); }
 
   /* ── Audio button (replay) ──────────────────────── */
   .speak-btn {
@@ -1057,7 +1059,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v52</span></h1>
+  <h1>Español <span>Flashcards · v53</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
