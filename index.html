@@ -1057,7 +1057,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v49</span></h1>
+  <h1>Español <span>Flashcards · v50</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -2787,11 +2787,9 @@ function adjustDelay(type, delta) {
   if (type === 'reveal') {
     revealDelay = Math.max(0.0, Math.min(10, revealDelay + delta));
     revealDisplay.textContent = revealDelay.toFixed(1);
-    try { localStorage.setItem('espRevealDelay', revealDelay); } catch(e) {}
   } else {
     advanceDelay = Math.max(0.0, Math.min(10, advanceDelay + delta));
     advanceDisplay.textContent = advanceDelay.toFixed(1);
-    try { localStorage.setItem('espAdvanceDelay', advanceDelay); } catch(e) {}
   }
 
   // Bump generation to discard any in-flight speech callbacks, then restart
