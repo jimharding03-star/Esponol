@@ -1,4 +1,4 @@
-const CACHE = 'espanol-v70';
+const CACHE = 'espanol-v71';
 
 // On install — cache the app shell
 self.addEventListener('install', e => {
