@@ -1086,7 +1086,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v62</span></h1>
+  <h1>Español <span>Flashcards · v63</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -2957,8 +2957,10 @@ stageEl.addEventListener('touchstart', (e) => {
 }, { passive: true });
 
 // Mouse: pause on first move over card
+let mouseMoveTimer = null;
 stageEl.addEventListener('mousemove', () => {
-  interactionPause();
+  clearTimeout(mouseMoveTimer);
+  mouseMoveTimer = setTimeout(() => interactionPause(), 500);
 });
 
 // ── Start ──────────────────────────────────────────────
