@@ -1085,7 +1085,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v58</span></h1>
+  <h1>Español <span>Flashcards · v59</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -2002,7 +2002,12 @@ function selectSet(i) {
     showNoWords(); return;
   }
   showCard(index);
-  startRevealPhase();
+  if (isPlaying) {
+    if (audioUnlocked) {
+      startRevealPhase();
+    }
+    // On iOS, startRevealPhase fires from unlockAudio after tap
+  }
 }
 
 // ── Word list sheet ─────────────────────────────────────
