@@ -804,6 +804,7 @@
   }
   .hard-badge:active { transform: scale(0.93); }
   .hard-badge.has-words { background: rgba(193,68,14,0.5); border-color: rgba(255,255,255,0.6); }
+  .easy-badge.has-words { background: rgba(107,124,92,0.6); border-color: rgba(255,255,255,0.6); }
 
   /* ── Choose Set button in header ────────────────── */
   .choose-set-btn {
@@ -1085,10 +1086,13 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v60</span></h1>
+  <h1>Español <span>Flashcards · v61</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
+    </button>
+    <button class="hard-badge easy-badge" id="easyBadge" onclick="openWordList()" title="Easy Words">
+      <span>✓</span><span id="easyBadgeCount">0</span>
     </button>
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
@@ -1894,6 +1898,12 @@ function updateHardBadge() {
   hardBadge.classList.toggle('has-words', count > 0);
 }
 
+function updateEasyBadge() {
+  const count = easyWords.size;
+  document.getElementById('easyBadgeCount').textContent = count;
+  document.getElementById('easyBadge').classList.toggle('has-words', count > 0);
+}
+
 function launchHardWords() {
   const idx = wordSets.findIndex(s => s.id === HARD_ID);
   if (idx >= 0) selectSet(idx);
@@ -2123,6 +2133,7 @@ let easyWords = new Set();
 
 function saveEasyWords() {
   try { localStorage.setItem('espEasy_' + getActiveSetId(), JSON.stringify([...easyWords])); } catch(e) {}
+  updateEasyBadge();
 }
 
 function loadEasyWords() {
@@ -2130,15 +2141,16 @@ function loadEasyWords() {
     const raw = localStorage.getItem('espEasy_' + getActiveSetId());
     easyWords = raw ? new Set(JSON.parse(raw)) : new Set();
   } catch(e) { easyWords = new Set(); }
+  updateEasyBadge();
 }
 
 function clearEasyWords() {
   easyWords.clear();
   saveEasyWords();
+  updateEasyBadge();
   renderWordListRows();
   renderHistory();
   updateEasyBtn();
-  // Rebuild word index to include previously-skipped easy words
   index = 0;
   while (index < words.length && isEasy(words[index])) index++;
   if (index < words.length) showCard(index);
