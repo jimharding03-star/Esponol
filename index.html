@@ -783,6 +783,28 @@
   .set-card.active .set-card-name { color: var(--terra); }
   .set-card.active .set-card-count { color: var(--clay); opacity: 0.7; }
 
+  /* ── Hard Words badge in header ─────────────────── */
+  .hard-badge {
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: 0.04em;
+    transition: background 0.15s, transform 0.1s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .hard-badge:active { transform: scale(0.93); }
+  .hard-badge.has-words { background: rgba(193,68,14,0.5); border-color: rgba(255,255,255,0.6); }
+
   /* ── Choose Set button in header ────────────────── */
   .choose-set-btn {
     background: rgba(255,255,255,0.18);
@@ -1063,8 +1085,11 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v57</span></h1>
+  <h1>Español <span>Flashcards · v58</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
+    <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
+      <span>🚩</span><span id="hardBadgeCount">0</span>
+    </button>
     <button class="choose-set-btn" id="chooseSetBtn" onclick="openSetModal()">
       <span class="csb-label">📚 Word Set</span>
       <span class="csb-name" id="currentSetName">🗣 Everyday</span>
@@ -1846,6 +1871,7 @@ function toggleFlag(setId, word) {
 
 function saveFlags() {
   try { localStorage.setItem('espFlagged', JSON.stringify([...flaggedKeys])); } catch(e) {}
+  updateHardBadge();
 }
 
 function loadFlags() {
@@ -1856,6 +1882,21 @@ function loadFlags() {
 }
 
 loadFlags();
+
+// ── Hard Words badge ───────────────────────────────────
+const hardBadge      = document.getElementById('hardBadge');
+const hardBadgeCount = document.getElementById('hardBadgeCount');
+
+function updateHardBadge() {
+  const count = getFlaggedWords().length;
+  hardBadgeCount.textContent = count;
+  hardBadge.classList.toggle('has-words', count > 0);
+}
+
+function launchHardWords() {
+  const idx = wordSets.findIndex(s => s.id === HARD_ID);
+  if (idx >= 0) selectSet(idx);
+}
 
 // Build "Flagged / Hard Words" dynamic set
 const HARD_ID = 'hard';
@@ -2519,6 +2560,7 @@ function init() {
   } catch(e) {}
   checkAudioUnlock();
   showCard(index);
+  updateHardBadge();
   // Only autostart if audio already unlocked (non-iOS)
   if (audioUnlocked && isPlaying) startRevealPhase();
 }
