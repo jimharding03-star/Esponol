@@ -995,6 +995,7 @@
 
   /* ── Flag badge on set cards ──────────────────── */
   .set-mastery { font-size: 0.58rem; color: var(--terra); font-weight: 700; letter-spacing: 0.04em; margin-top: 1px; }
+  .set-timestamp { font-size: 0.55rem; color: #bbb; font-weight: 400; margin-top: 2px; letter-spacing: 0.03em; }
 
   /* ── List button ─────────────────────────────────── */
   .list-btn {
@@ -1086,7 +1087,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v69</span></h1>
+  <h1>Español <span>Flashcards · v70</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -2168,15 +2169,52 @@ const setModalOverlay  = document.getElementById('setModalOverlay');
 const setGrid          = document.getElementById('setGrid');
 const currentSetNameEl = document.getElementById('currentSetName');
 
+// ── Set timestamps ─────────────────────────────────────
+function saveSetTimestamp(setId) {
+  try {
+    const ts = JSON.parse(localStorage.getItem('espSetTimestamps') || '{}');
+    ts[setId] = Date.now();
+    localStorage.setItem('espSetTimestamps', JSON.stringify(ts));
+  } catch(e) {}
+}
+
+function getSetTimestamps() {
+  try { return JSON.parse(localStorage.getItem('espSetTimestamps') || '{}'); } catch(e) { return {}; }
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'Not yet reviewed';
+  const secs = Math.floor((Date.now() - ts) / 1000);
+  if (secs < 60)  return 'Just now';
+  if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+  if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`;
+  if (secs < 604800) return `${Math.floor(secs / 86400)}d ago`;
+  return `${Math.floor(secs / 604800)}w ago`;
+}
+
 function buildSetGrid() {
   setGrid.innerHTML = '';
-  wordSets.forEach((set, i) => {
+  const timestamps = getSetTimestamps();
+
+  // Separate Hard Words (always first) from rest
+  const hardSet  = wordSets.find(s => s.id === HARD_ID);
+  const hardIdx  = wordSets.indexOf(hardSet);
+  const otherSets = wordSets
+    .map((s, i) => ({ set: s, i }))
+    .filter(({ set }) => set.id !== HARD_ID)
+    .sort((a, b) => (timestamps[b.set.id] || 0) - (timestamps[a.set.id] || 0));
+
+  const sorted = [{ set: hardSet, i: hardIdx }, ...otherSets];
+
+  sorted.forEach(({ set, i }) => {
     const isHard  = set.id === HARD_ID;
     const wList   = isHard ? getFlaggedWords() : set.words;
     const total   = wList.length;
     const flagged = isHard ? total : wList.filter(w => isFlagged(set.id, w)).length;
     const emoji   = set.label.match(/^\S+/)[0];
     const name    = set.label.replace(/^\S+\s*/, '');
+    const ts      = timestamps[set.id];
+    const timeStr = timeAgo(ts);
     const card    = document.createElement('div');
     card.className = 'set-card' + (i === activeSetIndex ? ' active' : '');
     card.id        = `setCard${i}`;
@@ -2187,7 +2225,8 @@ function buildSetGrid() {
       `<div class="set-card-emoji">${emoji}</div>` +
       `<div class="set-card-name">${name}</div>` +
       `<div class="set-card-count">${total} words</div>` +
-      badgeHtml;
+      badgeHtml +
+      `<div class="set-timestamp">${timeStr}</div>`;
     card.onclick = () => selectSet(i);
     setGrid.appendChild(card);
   });
@@ -2219,6 +2258,7 @@ function selectSet(i) {
   words = set.id === HARD_ID ? getFlaggedWords() : set.words;
   currentSetNameEl.textContent = set.label;
   try { localStorage.setItem('espActiveSet', set.id); } catch(e) {}
+  saveSetTimestamp(set.id);
   document.querySelectorAll('.set-card').forEach((c, idx) =>
     c.classList.toggle('active', idx === i));
   closeSetModal();
