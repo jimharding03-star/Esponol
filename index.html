@@ -1085,7 +1085,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v59</span></h1>
+  <h1>Español <span>Flashcards · v60</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -1265,6 +1265,7 @@
         <div class="wl-subtitle" id="wlSubtitle"></div>
       </div>
       <div class="wl-actions">
+        <button class="wl-btn" id="wlClearEasyBtn" onclick="clearEasyWords()" style="display:none;border-color:var(--sage);color:var(--sage)">✓ Clear Easy</button>
         <button class="wl-btn danger" id="wlResetBtn" onclick="clearHardWords()">Clear List</button>
         <button class="wl-btn" onclick="closeWordList()">✕ Close</button>
       </div>
@@ -1993,7 +1994,7 @@ function selectSet(i) {
     c.classList.toggle('active', idx === i));
   closeSetModal();
   ++speechGen; synth.cancel(); clearHistory();
-  easyWords.clear();
+  loadEasyWords();
   index = 0; isPlaying = true;
   playBtn.textContent = '⏸';
   doneOverlay.classList.remove('show');
@@ -2006,7 +2007,6 @@ function selectSet(i) {
     if (audioUnlocked) {
       startRevealPhase();
     }
-    // On iOS, startRevealPhase fires from unlockAudio after tap
   }
 }
 
@@ -2021,6 +2021,7 @@ function openWordList() {
   const isHard = set.id === HARD_ID;
   wlTitle.textContent = set.label;
   document.getElementById('wlResetBtn').style.display = isHard ? '' : 'none';
+  document.getElementById('wlClearEasyBtn').style.display = (!isHard && easyWords.size > 0) ? '' : 'none';
   renderWordListRows();
   wordListOverlay.classList.add('open');
   if (isPlaying) { clearAllTimers(); synth.cancel(); }
@@ -2043,9 +2044,15 @@ function renderWordListRows() {
   const isHard = set.id === HARD_ID;
   const list   = isHard ? getFlaggedWords() : set.words;
   const fCount = list.filter(w => isFlagged(w._setId || set.id, w)).length;
+  const easyCount = isHard ? 0 : list.filter(w => isEasy(w)).length;
   wlSubtitle.textContent = isHard
     ? `${list.length} flagged word${list.length !== 1 ? 's' : ''}`
-    : (fCount > 0 ? `${fCount} flagged as hard` : `${list.length} words`);
+    : (fCount > 0 || easyCount > 0
+        ? [fCount > 0 ? `${fCount} hard` : '', easyCount > 0 ? `${easyCount} easy` : ''].filter(Boolean).join(', ')
+        : `${list.length} words`);
+  // Show/hide Clear Easy button
+  const clearEasyBtn = document.getElementById('wlClearEasyBtn');
+  if (clearEasyBtn) clearEasyBtn.style.display = (!isHard && easyWords.size > 0) ? '' : 'none';
   wordListRows.innerHTML = '';
   list.forEach((w) => {
     const sid     = w._setId || set.id;
@@ -2111,8 +2118,31 @@ let ringDuration = 0;
 let speechGen    = 0; // incremented each sequence; stale callbacks check this
 let loopEnabled  = true;
 
-// ── Easy words (in-memory only, cleared on set switch) ─
+// ── Easy words (persistent per set via localStorage) ───
 let easyWords = new Set();
+
+function saveEasyWords() {
+  try { localStorage.setItem('espEasy_' + getActiveSetId(), JSON.stringify([...easyWords])); } catch(e) {}
+}
+
+function loadEasyWords() {
+  try {
+    const raw = localStorage.getItem('espEasy_' + getActiveSetId());
+    easyWords = raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch(e) { easyWords = new Set(); }
+}
+
+function clearEasyWords() {
+  easyWords.clear();
+  saveEasyWords();
+  renderWordListRows();
+  renderHistory();
+  updateEasyBtn();
+  // Rebuild word index to include previously-skipped easy words
+  index = 0;
+  while (index < words.length && isEasy(words[index])) index++;
+  if (index < words.length) showCard(index);
+}
 
 const CIRC = 113.1;
 const spanishWordEl   = document.getElementById('spanishWord');
@@ -2527,6 +2557,7 @@ function markEasy() {
   if (!words[index]) return;
   const w = words[index];
   easyWords.add(easyKey(w));
+  saveEasyWords();
   updateEasyBtn();
   renderHistory();
 }
@@ -2564,6 +2595,7 @@ function init() {
     }
   } catch(e) {}
   checkAudioUnlock();
+  loadEasyWords();
   showCard(index);
   updateHardBadge();
   // Only autostart if audio already unlocked (non-iOS)
@@ -2765,6 +2797,7 @@ function renderHistory() {
     item.querySelector('.history-easy').onclick = (e) => {
       e.stopPropagation();
       if (isEasy(w)) easyWords.delete(easyKey(w)); else easyWords.add(easyKey(w));
+      saveEasyWords();
       renderHistory();
       updateEasyBtn();
     };
