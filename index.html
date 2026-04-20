@@ -1086,7 +1086,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v61</span></h1>
+  <h1>Español <span>Flashcards · v62</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -2005,7 +2005,9 @@ function selectSet(i) {
   closeSetModal();
   ++speechGen; synth.cancel(); clearHistory();
   loadEasyWords();
-  index = 0; isPlaying = true;
+  index = 0;
+  while (index < words.length && isEasy(words[index])) index++;
+  isPlaying = true;
   playBtn.textContent = '⏸';
   doneOverlay.classList.remove('show');
   updateFlagBtn();
