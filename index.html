@@ -1087,7 +1087,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v74</span></h1>
+  <h1>Español <span>Flashcards · v75</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -1170,7 +1170,7 @@
         </div>
       </div>
     </div>
-    <div class="compact-toggle" onclick="toggleMode()">
+    <div class="compact-toggle" id="directionToggle" onclick="toggleMode()">
       <div class="ct-label">🔄 Direction</div>
       <div class="ct-bottom">
         <div class="ct-value" id="modeValue">ES → EN</div>
@@ -2852,6 +2852,26 @@ function toggleLoop() {
   document.getElementById('loopTrack').classList.toggle('on', loopEnabled);
   document.getElementById('loopValue').textContent = loopEnabled ? 'Continuous' : 'Once';
   try { localStorage.setItem('espLoop', loopEnabled ? '1' : '0'); } catch(e) {}
+
+  // Force Spanish → English when in dictation mode (Once)
+  if (!loopEnabled && studyMode !== 'es-to-en') {
+    studyMode = 'es-to-en';
+    document.getElementById('modeTrack').classList.remove('on');
+    document.getElementById('modeValue').textContent = 'ES → EN';
+    // Restart deck with forced direction
+    ++speechGen; synth.cancel(); clearHistory();
+    index = 0;
+    while (index < words.length && isEasy(words[index])) index++;
+    isPlaying = true;
+    playBtn.textContent = '⏸';
+    doneOverlay.classList.remove('show');
+    showCard(index);
+    if (audioUnlocked) startRevealPhase();
+  }
+  // Lock/unlock direction toggle
+  const dirToggle = document.getElementById('directionToggle');
+  dirToggle.style.opacity = loopEnabled ? '' : '0.4';
+  dirToggle.style.pointerEvents = loopEnabled ? '' : 'none';
 }
 
 function toggleMode() {
@@ -2924,6 +2944,13 @@ function init() {
       loopEnabled = savedLoop !== '0';
       document.getElementById('loopTrack').classList.toggle('on', loopEnabled);
       document.getElementById('loopValue').textContent = loopEnabled ? 'Continuous' : 'Once';
+      if (!loopEnabled) {
+        const dirToggle = document.getElementById('directionToggle');
+        if (dirToggle) { dirToggle.style.opacity = '0.4'; dirToggle.style.pointerEvents = 'none'; }
+        studyMode = 'es-to-en';
+        document.getElementById('modeTrack').classList.remove('on');
+        document.getElementById('modeValue').textContent = 'ES → EN';
+      }
     }
     const savedSet = localStorage.getItem('espActiveSet');
     if (savedSet) {
