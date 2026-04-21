@@ -1087,7 +1087,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v73</span></h1>
+  <h1>Español <span>Flashcards · v74</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -3013,9 +3013,17 @@ function startRevealPhase() {
   const gen = ++speechGen;
   setRingsSpeaking(true);
   speakSpanishThen(words[index].es, gen, (g) => {
-    if (g !== speechGen || !isPlaying) return; // stale — ignore
+    if (g !== speechGen || !isPlaying) return;
     setRingsSpeaking(false);
-    beginRevealCountdown(g);
+    if (!loopEnabled) {
+      // Dictation mode — pause after Spanish, wait for user to tap ▶
+      isPlaying = false;
+      playBtn.textContent = '▶';
+      cardEl.classList.add('interaction-paused');
+      playBtn.classList.add('hover-paused');
+    } else {
+      beginRevealCountdown(g);
+    }
   });
 }
 
@@ -3222,13 +3230,21 @@ function announceRepeat(onDone) {
 
 // ── Play / Pause ───────────────────────────────────────
 function togglePlay() {
-  isPlaying = !isPlaying;
   playBtn.classList.remove('hover-paused');
   cardEl.classList.remove('interaction-paused');
+
+  // Dictation mode: tap ▶ moves to next card
+  if (!loopEnabled && !isPlaying) {
+    isPlaying = true;
+    playBtn.textContent = '⏸';
+    nextCard();
+    return;
+  }
+
+  isPlaying = !isPlaying;
   playBtn.textContent = isPlaying ? '⏸' : '▶';
 
   if (isPlaying) {
-    // Resume: if english not shown, start reveal phase fresh
     const revealed = englishWordEl.classList.contains('revealed');
     if (!revealed) {
       startRevealPhase();
