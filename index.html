@@ -1052,6 +1052,16 @@
   .ai-btn:active { transform: scale(0.91); }
   .ai-btn.offline { opacity: 0.35; cursor: not-allowed; }
 
+  /* ── Add Word button ─────────────────────────────── */
+  .add-word-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--mist); background: #fff; color: var(--bark);
+    font-size: 1.1rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 2px 8px var(--shadow);
+    transition: transform 0.15s, background 0.15s; user-select: none;
+  }
+  .add-word-btn:active { transform: scale(0.91); }
+
   /* ── Hint display on card ────────────────────────── */
   .hint-display {
     font-family: 'Lato', sans-serif;
@@ -1087,7 +1097,7 @@
 <body>
 
 <header>
-  <h1>Español <span>Flashcards · v75</span></h1>
+  <h1>Español <span>Flashcards · v76</span></h1>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="hard-badge" id="hardBadge" onclick="launchHardWords()" title="Hard Words">
       <span>🚩</span><span id="hardBadgeCount">0</span>
@@ -1100,10 +1110,6 @@
       <span class="csb-name" id="currentSetName">🗣 Everyday</span>
     </button>
     <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊 <span id="muteLbl">ON</span></button>
-    <div class="progress-pill" id="progressPill">
-      <span id="pillCount">1 of 30</span>
-      <span id="pillLeft" style="opacity:0.7;font-weight:400;font-size:0.65rem;display:block;line-height:1;margin-top:2px">29 to go</span>
-    </div>
   </div>
 </header>
 
@@ -1138,7 +1144,13 @@
     <div class="card-body">
       <!-- Left panel -->
       <div class="panel-spanish">
-        <div class="panel-label" id="leftPanelLabel">Español</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div class="panel-label" id="leftPanelLabel">Español</div>
+          <div id="progressPill" style="font-family:'Lato',sans-serif;font-size:0.62rem;font-weight:700;color:var(--terra);text-align:right;line-height:1.2">
+            <span id="pillCount">1 of 30</span>
+            <span id="pillLeft" style="display:block;opacity:0.7;font-weight:400">29 to go</span>
+          </div>
+        </div>
         <div class="spanish-word" id="spanishWord">hola</div>
         <div class="pronunciation" id="pronunciation">OH-lah</div>
         <button class="speak-btn" id="speakBtn" onclick="speakCurrent()">
@@ -1209,6 +1221,7 @@
   <button class="easy-btn"   id="easyBtn" onclick="markEasy()" title="Mark as easy">✓</button>
   <button class="hint-btn"   id="hintBtn" onclick="openHintModal()" title="Memory hint">💡</button>
   <button class="ai-btn"     id="aiBtn"   onclick="openAiModal()" title="Ask AI">🤖</button>
+  <button class="add-word-btn" onclick="openAddWordModal()" title="Add word">➕</button>
 </div>
 
 <!-- Hint modal -->
@@ -1250,6 +1263,50 @@
     </div>
     <div style="padding:16px 20px 32px">
       <div id="aiResponse" style="font-family:'Lato',sans-serif;font-size:0.95rem;line-height:1.7;color:var(--bark);min-height:200px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Word modal -->
+<div class="hint-modal-overlay" id="addWordModalOverlay" onclick="handleAddWordOverlayClick(event)">
+  <div class="hint-modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="wl-header">
+      <div class="wl-title-block">
+        <div class="wl-title">➕ Add New Word</div>
+        <div class="wl-subtitle">Added to Hard Words automatically</div>
+      </div>
+      <div class="wl-actions">
+        <button class="wl-btn" onclick="closeAddWordModal()">✕ Close</button>
+      </div>
+    </div>
+    <div style="padding:16px 20px 32px;display:flex;flex-direction:column;gap:12px">
+      <div>
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--terra);margin-bottom:6px">Spanish Word</div>
+        <input id="addWordEs" type="text" placeholder="e.g. la mariposa"
+          style="width:100%;padding:11px 14px;font-family:'Lato',sans-serif;font-size:1rem;border:1.5px solid var(--mist);border-radius:12px;color:var(--bark);background:var(--cream)">
+      </div>
+      <div>
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;margin-bottom:6px">Pronunciation (optional)</div>
+        <input id="addWordPron" type="text" placeholder="e.g. lah mah-ree-POH-sah"
+          style="width:100%;padding:11px 14px;font-family:'Lato',sans-serif;font-size:1rem;border:1.5px solid var(--mist);border-radius:12px;color:var(--bark);background:var(--cream)">
+      </div>
+      <div>
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--sage);margin-bottom:6px">English Meaning</div>
+        <input id="addWordEn" type="text" placeholder="e.g. butterfly"
+          style="width:100%;padding:11px 14px;font-family:'Lato',sans-serif;font-size:1rem;border:1.5px solid var(--mist);border-radius:12px;color:var(--bark);background:var(--cream)">
+      </div>
+      <div>
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;margin-bottom:6px">Add to Word Set</div>
+        <select id="addWordSet"
+          style="width:100%;padding:11px 14px;font-family:'Lato',sans-serif;font-size:0.95rem;border:1.5px solid var(--mist);border-radius:12px;color:var(--bark);background:var(--cream)">
+        </select>
+      </div>
+      <button onclick="saveNewWord()"
+        style="padding:14px;background:linear-gradient(135deg,var(--terra),var(--clay));color:#fff;border:none;border-radius:999px;font-family:'Lato',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:0.06em;cursor:pointer;margin-top:4px">
+        Save Word
+      </button>
+      <div id="addWordMsg" style="text-align:center;font-size:0.85rem;color:var(--sage);display:none">✓ Word saved!</div>
     </div>
   </div>
 </div>
@@ -2175,6 +2232,7 @@ function loadFlags() {
 }
 
 loadFlags();
+loadCustomWords();
 
 // ── Hard Words badge ───────────────────────────────────
 const hardBadge      = document.getElementById('hardBadge');
@@ -2577,6 +2635,105 @@ function clearHint() {
 }
 
 loadHints();
+
+// ── Custom words system ────────────────────────────────
+const CUSTOM_KEY = 'espCustomWords';
+
+function loadCustomWords() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_KEY);
+    if (!raw) return;
+    const customs = JSON.parse(raw); // [{es,pron,en,setId}, ...]
+    customs.forEach(w => {
+      const set = wordSets.find(s => s.id === w.setId);
+      if (set && !set.words.find(x => x.es === w.es)) {
+        set.words.push({ es: w.es, pron: w.pron || '', en: w.en, _custom: true });
+      }
+      // Also flag as hard
+      flaggedKeys.add(wordKey(w.setId, w));
+    });
+  } catch(e) {}
+}
+
+function saveCustomWord(es, pron, en, setId) {
+  try {
+    const raw = localStorage.getItem(CUSTOM_KEY);
+    const customs = raw ? JSON.parse(raw) : [];
+    // Avoid duplicates
+    if (!customs.find(w => w.es === es && w.setId === setId)) {
+      customs.push({ es, pron, en, setId });
+      localStorage.setItem(CUSTOM_KEY, JSON.stringify(customs));
+    }
+  } catch(e) {}
+}
+
+function openAddWordModal() {
+  // Populate set dropdown (exclude Hard Words)
+  const sel = document.getElementById('addWordSet');
+  sel.innerHTML = '';
+  wordSets.filter(s => s.id !== HARD_ID).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = s.label.replace(/^\S+\s*/, '');
+    if (s.id === wordSets[activeSetIndex]?.id) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  document.getElementById('addWordEs').value = '';
+  document.getElementById('addWordPron').value = '';
+  document.getElementById('addWordEn').value = '';
+  document.getElementById('addWordMsg').style.display = 'none';
+  document.getElementById('addWordModalOverlay').classList.add('open');
+  if (isPlaying) { clearAllTimers(); synth.cancel(); }
+  setTimeout(() => document.getElementById('addWordEs').focus(), 400);
+}
+
+function closeAddWordModal() {
+  document.getElementById('addWordModalOverlay').classList.remove('open');
+  if (isPlaying) {
+    const revealed = englishWordEl.classList.contains('revealed');
+    if (revealed) startAdvancePhase(); else startRevealPhase();
+  }
+}
+
+function handleAddWordOverlayClick(e) {
+  if (e.target === document.getElementById('addWordModalOverlay')) closeAddWordModal();
+}
+
+function saveNewWord() {
+  const es   = document.getElementById('addWordEs').value.trim();
+  const pron = document.getElementById('addWordPron').value.trim();
+  const en   = document.getElementById('addWordEn').value.trim();
+  const setId = document.getElementById('addWordSet').value;
+  if (!es || !en) {
+    document.getElementById('addWordEs').style.borderColor = es ? '' : 'var(--terra)';
+    document.getElementById('addWordEn').style.borderColor = en ? '' : 'var(--terra)';
+    return;
+  }
+  // Reset borders
+  document.getElementById('addWordEs').style.borderColor = '';
+  document.getElementById('addWordEn').style.borderColor = '';
+  // Add to word set
+  const set = wordSets.find(s => s.id === setId);
+  if (set && !set.words.find(w => w.es === es)) {
+    const newWord = { es, pron, en, _custom: true };
+    set.words.push(newWord);
+    // Flag as hard
+    flaggedKeys.add(wordKey(setId, newWord));
+    saveFlags();
+    saveCustomWord(es, pron, en, setId);
+    updateHardBadge();
+    buildSetGrid();
+  }
+  // Show confirmation
+  const msg = document.getElementById('addWordMsg');
+  msg.style.display = 'block';
+  setTimeout(() => {
+    msg.style.display = 'none';
+    document.getElementById('addWordEs').value = '';
+    document.getElementById('addWordPron').value = '';
+    document.getElementById('addWordEn').value = '';
+  }, 1500);
+}
 
 // ── AI system ──────────────────────────────────────────
 const aiBtn           = document.getElementById('aiBtn');
